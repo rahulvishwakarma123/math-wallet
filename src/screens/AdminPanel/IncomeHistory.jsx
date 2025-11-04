@@ -45,18 +45,18 @@ const IncomeHistory = () => {
       icon: "https://img.icons8.com/3d-fluency/94/bar-chart.png",
       path: AuthenticatedAdminRouters.LEVEL_INCOME_HISTORY,
     },
-    {
-      title: "Total Matching Income",
-      value: `$ ${Number(totalIncome?.totalMatching ?? 0).toFixed(2)}`,
-      icon: "https://img.icons8.com/3d-fluency/94/handshake.png",
-      path: AuthenticatedAdminRouters.MATCHING_INCOME_HISTORY,
-    },
-    {
-      title: "Total Trading",
-      value: `$ ${Number(totalIncome?.totalTrading ?? 0).toFixed(2)}`,
-      icon: "https://img.icons8.com/3d-fluency/94/candle-sticks.png",
-      path: AuthenticatedAdminRouters.TRADING_LIST,
-    },
+    // {
+    //   title: "Total Matching Income",
+    //   value: `$ ${Number(totalIncome?.totalMatching ?? 0).toFixed(2)}`,
+    //   icon: "https://img.icons8.com/3d-fluency/94/handshake.png",
+    //   path: AuthenticatedAdminRouters.MATCHING_INCOME_HISTORY,
+    // },
+    // {
+    //   title: "Total Trading",
+    //   value: `$ ${Number(totalIncome?.totalTrading ?? 0).toFixed(2)}`,
+    //   icon: "https://img.icons8.com/3d-fluency/94/candle-sticks.png",
+    //   path: AuthenticatedAdminRouters.TRADING_LIST,
+    // },
   ];
 
   const fetchAllIncomeHistory = async (page = 1) => {

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Wallet, ArrowUpRight, DollarSign, CreditCard, Shield, CheckCircle, AlertCircle, TrendingUp, X } from 'lucide-react';
+import { toast } from "react-toastify";
 
 // Mock function for demonstration
 const getMoneySymbol = () => "$";
@@ -14,20 +15,27 @@ const WalletDepositPage = () => {
   };
 
   const handleWalletDepositRequest = async () => {
-    if (amount <= 0) {
-      console.log("Error: Deposit Amount must be greater than 0");
+    const numberAmount = Number(amount);
+    
+    if (numberAmount <= 0) {
+      toast.error("Deposit Amount must be greater than 0");
+      return;
+    }
+    
+    if (numberAmount < 100) {
+      toast.error("Minimum deposit amount is $100");
       return;
     }
     
     setLoading(true);
-    const numberAmount = Number(amount);
     try {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 2000));
-      console.log("Success: Deposit Request Generated Successfully");
+      toast.success("Deposit Request Generated Successfully");
       setAmount("");
     } catch (error) {
       console.error("Error in deposit request:", error);
+      toast.error("Error processing deposit request");
     } finally {
       setLoading(false);
     }
@@ -128,15 +136,24 @@ const WalletDepositPage = () => {
             )}
           </div>
           {amount && Number(amount) > 0 && (
-            <p className="text-xs text-green-400 mt-2 flex items-center gap-1">
-              <CheckCircle className="w-3 h-3" />
-              Amount looks good for deposit
-            </p>
+            <div className="mt-2">
+              {Number(amount) >= 100 ? (
+                <p className="text-xs text-green-400 flex items-center gap-1">
+                  <CheckCircle className="w-3 h-3" />
+                  Amount looks good for deposit
+                </p>
+              ) : (
+                <p className="text-xs text-red-400 flex items-center gap-1">
+                  <AlertCircle className="w-3 h-3" />
+                  Minimum deposit amount is $100
+                </p>
+              )}
+            </div>
           )}
         </div>
 
         {/* Deposit Summary */}
-        {amount && Number(amount) > 0 && (
+        {amount && Number(amount) >= 100 && (
           <div className="relative mb-8 p-5 bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-500/20 rounded-xl">
             <h3 className="text-lg font-bold text-white mb-3 flex items-center gap-2">
               <CheckCircle className="w-5 h-5 text-green-400" />
@@ -164,9 +181,9 @@ const WalletDepositPage = () => {
         {/* Submit Button */}
         <button
           onClick={handleWalletDepositRequest}
-          disabled={loading || !amount || Number(amount) <= 0}
+          disabled={loading || !amount || Number(amount) < 100}
           className={`relative w-full py-4 px-6 rounded-xl font-bold text-lg transition-all duration-300 overflow-hidden group ${
-            loading || !amount || Number(amount) <= 0
+            loading || !amount || Number(amount) < 100
               ? 'bg-slate-700/50 text-slate-500 cursor-not-allowed border border-slate-600/30'
               : 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white shadow-xl shadow-green-500/25 hover:shadow-green-500/40 hover:scale-[1.02] active:scale-[0.98] border border-green-500/30'
           }`}
@@ -181,8 +198,8 @@ const WalletDepositPage = () => {
               <>
                 <TrendingUp className="w-5 h-5" />
                 <span>
-                  {!amount || Number(amount) <= 0 
-                    ? 'Enter Amount to Deposit'
+                  {!amount || Number(amount) < 100 
+                    ? 'Minimum deposit amount is $100'
                     : `Confirm Deposit ${getMoneySymbol()}${formatAmount(amount)}`
                   }
                 </span>
@@ -191,7 +208,7 @@ const WalletDepositPage = () => {
           </div>
           
           {/* Button glow effect */}
-          {!loading && amount && Number(amount) > 0 && (
+          {!loading && amount && Number(amount) >= 100 && (
             <div className="absolute inset-0 bg-gradient-to-r from-green-400/20 via-emerald-400/20 to-green-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-xl"></div>
           )}
         </button>

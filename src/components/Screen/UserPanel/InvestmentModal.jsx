@@ -15,9 +15,12 @@ const InvestmentModal = ({ plan, onClose }) => {
   const userInfo = useSelector((state) => state?.isLoggedUser?.data);
   console.log(userInfo)
   const [amount, setAmount] = useState(0);
+  const MINIMUM_AMOUNT = 100;
 
   useEffect(() => {
-    setAmount(50); // Initialize with minimum value (or any value, if no min exists)
+    // Use plan min if it's higher than global minimum, otherwise use global minimum
+    const initialAmount = plan?.min && plan.min > MINIMUM_AMOUNT ? plan.min : MINIMUM_AMOUNT;
+    setAmount(initialAmount);
   }, [plan]);
 
   const USDT_ADDRESS = "0x55d398326f99059fF775485246999027B3197955";
@@ -31,13 +34,29 @@ const InvestmentModal = ({ plan, onClose }) => {
 
   const handleChange = (e) => {
     const value = e.target.value;
-    setAmount(value); // Simply set the amount without validation
+    setAmount(value);
   };
 
   const handleConnectAndPayment = async () => {
-    if(amount < 50){
-      toast.error("Amount must be greater than or equal to 50");
-      return
+    const numberAmount = Number(amount);
+    
+    if (!amount || numberAmount <= 0) {
+      toast.error("Please enter a valid amount");
+      return;
+    }
+    
+    // Determine the actual minimum (plan min or global minimum, whichever is higher)
+    const actualMinimum = plan?.min && plan.min > MINIMUM_AMOUNT ? plan.min : MINIMUM_AMOUNT;
+    
+    if (numberAmount < actualMinimum) {
+      toast.error(`Minimum investment amount is ${getMoneySymbol()}${actualMinimum}`);
+      return;
+    }
+    
+    // Check if amount exceeds plan max (if plan has max)
+    if (plan?.max && plan.max !== Infinity && numberAmount > plan.max) {
+      toast.error(`Maximum investment amount for this plan is ${getMoneySymbol()}${plan.max}`);
+      return;
     }
     try {
       dispatch(setLoading(true));
@@ -189,6 +208,11 @@ const InvestmentModal = ({ plan, onClose }) => {
 
   if (!plan) return null;
 
+  // Calculate the actual minimum (plan min or global minimum, whichever is higher)
+  const actualMinimum = plan?.min && plan.min > MINIMUM_AMOUNT ? plan.min : MINIMUM_AMOUNT;
+  const numberAmount = Number(amount);
+  const isAmountValid = amount && numberAmount >= actualMinimum && (!plan?.max || plan.max === Infinity || numberAmount <= plan.max);
+
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
       <div className="bg-slate-800 border border-slate-700/50 rounded-2xl p-8 w-full max-w-md m-4">
@@ -207,7 +231,7 @@ const InvestmentModal = ({ plan, onClose }) => {
         <div className="space-y-4">
           <div className="text-sm text-slate-400">
             <span className="font-semibold text-white">
-              Minimum Investment: {getMoneySymbol()} 50
+              Minimum Investment: {getMoneySymbol()}{actualMinimum}
             </span>
           </div>
 
@@ -219,8 +243,15 @@ const InvestmentModal = ({ plan, onClose }) => {
               type="number"
               value={amount}
               onChange={handleChange}
+              min={actualMinimum}
+              placeholder={`Enter amount (minimum ${getMoneySymbol()}${actualMinimum})`}
               className="w-full bg-slate-900/50 border border-slate-700 rounded-lg py-3 px-4 text-white text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
             />
+            {amount && numberAmount < actualMinimum && (
+              <p className="text-red-400 text-xs mt-1">
+                Minimum investment amount is {getMoneySymbol()}{actualMinimum}
+              </p>
+            )}
           </div>
 
           <div className="text-xs text-slate-500 p-3 bg-slate-900/50 rounded-lg">
@@ -231,10 +262,17 @@ const InvestmentModal = ({ plan, onClose }) => {
 
           <button
             onClick={handleConnectAndPayment}
-            className="w-full bg-blue-600 text-white p-3 rounded-xl font-semibold text-lg hover:bg-blue-500 transition-colors shadow-lg shadow-blue-600/30"
+            disabled={!isAmountValid}
+            className={`w-full p-3 rounded-xl font-semibold text-lg transition-colors shadow-lg ${
+              !isAmountValid
+                ? "bg-slate-700 text-slate-400 cursor-not-allowed"
+                : "bg-blue-600 text-white hover:bg-blue-500 shadow-blue-600/30"
+            }`}
           >
-            Confirm {getMoneySymbol()}
-            {amount}
+            {!isAmountValid
+              ? `Minimum ${getMoneySymbol()}${actualMinimum} Required`
+              : `Confirm ${getMoneySymbol()}${amount}`
+            }
           </button>
         </div>
       </div>

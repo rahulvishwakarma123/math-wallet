@@ -6,11 +6,15 @@ import {
   getAllPackageBuyers,
   getPackageInfoAdmin,
   updatePackageAdmin,
+  createPackageAdmin,
+  deletePackageAdmin,
 } from "../../api/admin.api";
 import { getMoneySymbol } from "../../utils/additionalFunc";
 import { toast } from "react-toastify";
 import DataTable from "../../components/Screen/UserPanel/DataTable";
 import { useLocation } from "react-router-dom";
+import { isToday } from "../../utils/helper";
+import Swal from "sweetalert2";
 
 const ManagePackage = () => {
   const dispatch = useDispatch();
@@ -27,9 +31,12 @@ const ManagePackage = () => {
     min: "",
     max: "",
     profitPercentage: "",
+    profitLimit: "",
     tags: "",
     status: true,
+    perDayRoi: "",
   });
+  const [isCreateMode, setIsCreateMode] = useState(false);
 
   const staticPlans = [
     {
@@ -85,15 +92,33 @@ const ManagePackage = () => {
   const handleSelectPlan = (plan) => {
     setSelectedPlan(plan);
     setIsModalOpen(true);
+    setIsCreateMode(false);
 
     setFormData({
       title: plan.title || "",
       min: plan.min || "",
       max: plan.max === Infinity ? "" : plan.max || "",
       profitPercentage: plan.profitPercentage || "",
+      profitLimit: plan.profitLimit || plan.limit || "",
       tags: extractTags(plan.features) || "",
       status: extractStatus(plan.features),
       perDayRoi: plan.perDayRoi || "",
+    });
+  };
+
+  const handleCreateNew = () => {
+    setSelectedPlan(null);
+    setIsModalOpen(true);
+    setIsCreateMode(true);
+    setFormData({
+      title: "",
+      min: "",
+      max: "",
+      profitPercentage: "",
+      profitLimit: "",
+      tags: "",
+      status: true,
+      perDayRoi: "",
     });
   };
 
@@ -110,11 +135,13 @@ const ManagePackage = () => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedPlan(null);
+    setIsCreateMode(false);
     setFormData({
       title: "",
       min: "",
       max: "",
       profitPercentage: "",
+      profitLimit: "",
       tags: "",
       status: true,
       perDayRoi: "",
@@ -133,20 +160,24 @@ const ManagePackage = () => {
     try {
       dispatch(setLoading(true));
       const response = await getPackageInfoAdmin();
-      const rawPlans = response?.data;
-
+      console.log("Admin Package API Response:", response);
+      
+      const rawPlans = response?.data || response?.packages || response;
+      
       if (!rawPlans || !Array.isArray(rawPlans)) {
+        console.warn("Invalid API response format, using static plans");
         setPlans(staticPlans);
         return;
       }
 
       const transformedPlans = rawPlans.map((plan) => ({
         _id: plan._id,
-        id: plan.id,
+        id: plan.id || plan._id,
         title: plan.title,
         min: plan.minAmount,
         max: plan.maxAmount,
         profitPercentage: plan.percentage,
+        profitLimit: plan.profitLimit || plan.limit || "Up to 3X",
         recommended: plan.title.toLowerCase() === "standard",
         perDayRoi: plan.perDayRoi ?? 0,
         status: plan.status,
@@ -157,15 +188,17 @@ const ManagePackage = () => {
               ? "∞"
               : getMoneySymbol() + plan.maxAmount
           }`,
-          `Tags: ${plan.tags.join(", ")}`,
+          `Profit limit: ${plan.profitLimit || plan.limit || "Up to 3X"}`,
+          plan.tags && plan.tags.length > 0 ? `Tags: ${plan.tags.join(", ")}` : "",
+          plan.perDayRoi ? `Per day ROI: $ ${plan.perDayRoi}` : "",
           `Status: ${plan.status ? "Active" : "Inactive"}`,
-          `Per day ROI: $ ${plan?.perDayRoi}`,
-        ],
+        ].filter(Boolean), // Remove empty strings
       }));
 
       setPlans(transformedPlans);
     } catch (error) {
       console.error("Error fetching package info:", error);
+      // Don't show toast for initial load errors, just use static plans
       setPlans(staticPlans);
     } finally {
       dispatch(setLoading(false));
@@ -179,31 +212,92 @@ const ManagePackage = () => {
   const handleFormSubmit = async (e) => {
     e.preventDefault();
 
+    // Validation
+    if (!formData.title || !formData.min || !formData.profitPercentage) {
+      toast.error("Please fill all required fields");
+      return;
+    }
+
     const payload = {
       title: formData.title,
       minAmount: parseFloat(formData.min),
       maxAmount: formData.max === "" ? Infinity : parseFloat(formData.max),
       percentage: parseFloat(formData.profitPercentage),
-      tags: formData.tags.split(",").map((t) => t.trim()),
+      profitLimit: formData.profitLimit || "Up to 3X", // Default profit limit
+      tags: formData.tags ? formData.tags.split(",").map((t) => t.trim()).filter(Boolean) : [],
       status: formData.status,
       perDayRoi: parseFloat(formData.perDayRoi) || 0,
     };
 
     try {
       dispatch(setLoading(true));
-      const res = await updatePackageAdmin(selectedPlan._id, payload);
-      if (res?.success) {
-        toast.success(res?.message || "Plan updated successfully!");
-        handleCloseModal();
-        fetchPackageInfo();
+      let res;
+      
+      if (isCreateMode) {
+        // Create new package
+        res = await createPackageAdmin(payload);
+        if (res?.success) {
+          toast.success(res?.message || "Package created successfully!");
+          handleCloseModal();
+          fetchPackageInfo();
+        } else {
+          toast.error(res?.message || "Failed to create package!");
+        }
       } else {
-        toast.error(res?.message || "Something went wrong!");
+        // Update existing package
+        if (!selectedPlan?._id) {
+          toast.error("Package ID is missing. Cannot update package.");
+          return;
+        }
+        res = await updatePackageAdmin(selectedPlan._id, payload);
+        if (res?.success) {
+          toast.success(res?.message || "Plan updated successfully!");
+          handleCloseModal();
+          fetchPackageInfo();
+        } else {
+          toast.error(res?.message || "Something went wrong!");
+        }
       }
     } catch (error) {
-      console.error("Failed to update plan:", error);
-      toast.error("Failed to update plan. Please try again.");
+      console.error(`Failed to ${isCreateMode ? 'create' : 'update'} plan:`, error);
+      toast.error(`Failed to ${isCreateMode ? 'create' : 'update'} plan. Please try again.`);
     } finally {
       dispatch(setLoading(false));
+    }
+  };
+
+  const handleDeletePackage = async (planId) => {
+    if (!planId) {
+      toast.error("Package ID is missing. Cannot delete package.");
+      return;
+    }
+
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        dispatch(setLoading(true));
+        const res = await deletePackageAdmin(planId);
+        if (res?.success) {
+          toast.success(res?.message || "Package deleted successfully!");
+          fetchPackageInfo();
+        } else {
+          toast.error(res?.message || res?.error || "Failed to delete package!");
+        }
+      } catch (error) {
+        console.error("Failed to delete package:", error);
+        toast.error(error?.response?.data?.message || "Failed to delete package. Please try again.");
+      } finally {
+        dispatch(setLoading(false));
+      }
     }
   };
 
@@ -212,13 +306,15 @@ const ManagePackage = () => {
       dispatch(setLoading(true));
       const response = await getAllPackageBuyers();
       if (response?.success) {
-        setAllPackageBuyers(response?.data?.history || []);
+        setAllPackageBuyers(response?.data?.history || response?.data || []);
       } else {
-        toast.error(response?.message || "Something went wrong");
+        // Don't show error toast if API fails, just set empty array
+        console.warn("Failed to fetch package buyers:", response?.message);
         setAllPackageBuyers([]);
       }
     } catch (err) {
       console.error("Error fetching package buyers: ", err);
+      // Don't show toast for initial load errors
       setAllPackageBuyers([]);
     } finally {
       dispatch(setLoading(false));
@@ -333,21 +429,45 @@ const ManagePackage = () => {
 
   return (
     <div className="space-y-8 pt-4">
-      <div>
-        <h1 className="text-3xl font-bold text-white">Investment Plans</h1>
-        <p className="text-slate-400 mt-1">
-          Choose a plan that fits your strategy and start earning.
-        </p>
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold text-white">Manage Packages</h1>
+          <p className="text-slate-400 mt-1">
+            Create, update, and delete investment packages.
+          </p>
+        </div>
+        <button
+          onClick={handleCreateNew}
+          className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2"
+        >
+          <i className="fa-solid fa-plus"></i>
+          Create New Package
+        </button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {plans.map((plan) => (
-          <PlanCard
-            key={plan.id}
-            plan={plan}
-            onSelect={handleSelectPlan}
-            isAdmin={true}
-          />
+          <div key={plan.id} className="relative">
+            <PlanCard
+              plan={plan}
+              onSelect={handleSelectPlan}
+              isAdmin={true}
+            />
+            <button
+              onClick={() => {
+                const packageId = plan._id || plan.id;
+                if (!packageId) {
+                  toast.error("Package ID is missing");
+                  return;
+                }
+                handleDeletePackage(packageId);
+              }}
+              className="absolute top-2 right-2 bg-red-600 hover:bg-red-500 text-white p-2 rounded-lg transition-colors"
+              title="Delete Package"
+            >
+              <i className="fa-solid fa-trash"></i>
+            </button>
+          </div>
         ))}
       </div>
 
@@ -358,11 +478,13 @@ const ManagePackage = () => {
         pageSize={10}
       />
 
-      {/* Edit Modal */}
+      {/* Create/Edit Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center">
-          <div className="bg-slate-900 p-6 rounded-lg shadow-lg w-full max-w-md">
-            <h2 className="text-xl font-semibold text-white mb-4">Edit Plan</h2>
+        <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
+          <div className="bg-slate-900 p-6 rounded-lg shadow-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
+            <h2 className="text-xl font-semibold text-white mb-4">
+              {isCreateMode ? "Create New Package" : "Edit Package"}
+            </h2>
             <form onSubmit={handleFormSubmit} className="space-y-4 text-sm">
               <div className="space-y-2">
                 <span className="text-sm text-slate-400">Title</span>
@@ -410,13 +532,26 @@ const ManagePackage = () => {
                   name="profitPercentage"
                   value={formData.profitPercentage}
                   onChange={handleFormChange}
-                  placeholder="Profit Percentage"
+                  placeholder="Profit Percentage (e.g., 8)"
                   className="w-full p-2 rounded border bg-slate-800 text-white"
                 />
               </div>
               <div className="space-y-2">
                 <span className="text-sm text-slate-400">
-                  Package Description (separated by comma)
+                  Profit Limit
+                </span>
+                <input
+                  type="text"
+                  name="profitLimit"
+                  value={formData.profitLimit}
+                  onChange={handleFormChange}
+                  placeholder="Profit Limit (e.g., Up to 3X)"
+                  className="w-full p-2 rounded border bg-slate-800 text-white"
+                />
+              </div>
+              <div className="space-y-2">
+                <span className="text-sm text-slate-400">
+                  Package Tags/Features (separated by comma)
                 </span>
                 <input
                   type="text"
@@ -452,15 +587,15 @@ const ManagePackage = () => {
                 <button
                   type="button"
                   onClick={handleCloseModal}
-                  className="bg-slate-500 text-white px-4 py-2 rounded cursor-pointer"
+                  className="bg-slate-500 hover:bg-slate-400 text-white px-4 py-2 rounded cursor-pointer transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded cursor-pointer"
+                  className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded cursor-pointer transition-colors"
                 >
-                  Save Changes
+                  {isCreateMode ? "Create Package" : "Save Changes"}
                 </button>
               </div>
             </form>

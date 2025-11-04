@@ -35,7 +35,7 @@ export async function sendPaymentDetail(payload) {
 
 export async function getPackageInfo() {
   try {
-    const response = await Axios.get(`${userApi}/get-package-info`);
+    const response = await Axios.get(`${userApi}/get-all-packages`);
     return response?.data;
   } catch (error) {
     return error;

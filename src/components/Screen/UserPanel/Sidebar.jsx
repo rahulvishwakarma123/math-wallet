@@ -402,7 +402,7 @@ const Sidebar = ({ isOpen, onClose }) => {
                   setOpenDropdown(null); // close all dropdowns on link click
                 }}
               />
-              <NavLink
+              {/* <NavLink
                 to={AuthenticatedUserRouters.MATCHING_INCOME_HISTORY}
                 icon="fa-solid fa-dollar-sign"
                 text="Matching Income"
@@ -410,8 +410,8 @@ const Sidebar = ({ isOpen, onClose }) => {
                   onClose();
                   setOpenDropdown(null); // close all dropdowns on link click
                 }}
-              />
-              <NavLink
+              /> */}
+              {/* <NavLink
                 to={AuthenticatedUserRouters.GLOBAL_ACHIEVERS}
                 icon="fa-solid fa-dollar-sign"
                 text="Global Achievers"
@@ -419,7 +419,7 @@ const Sidebar = ({ isOpen, onClose }) => {
                   onClose();
                   setOpenDropdown(null); // close all dropdowns on link click
                 }}
-              />
+              /> */}
             </SidebarDropdown>
             <SidebarDropdown
               id="manage-support"
@@ -620,7 +620,7 @@ const Sidebar = ({ isOpen, onClose }) => {
                   setOpenDropdown(null); // close all dropdowns on link click
                 }}
               />
-              <NavLink
+              {/* <NavLink
                 to={AuthenticatedAdminRouters.MATCHING_INCOME_HISTORY}
                 icon="fa-solid fa-dollar-sign"
                 text="Matching Income"
@@ -637,7 +637,7 @@ const Sidebar = ({ isOpen, onClose }) => {
                   onClose();
                   setOpenDropdown(null); // close all dropdowns on link click
                 }}
-              />
+              /> */}
             </SidebarDropdown>
 
             <SidebarDropdown
@@ -666,7 +666,7 @@ const Sidebar = ({ isOpen, onClose }) => {
                 }}
               />
             </SidebarDropdown>
-            <SidebarDropdown
+            {/* <SidebarDropdown
               id="global-achievers"
               icon="fa-solid fa-money-bill-transfer"
               text="Global Achievers"
@@ -691,7 +691,7 @@ const Sidebar = ({ isOpen, onClose }) => {
                   setOpenDropdown(null); // close all dropdowns on link click
                 }}
               />
-            </SidebarDropdown>
+            </SidebarDropdown> */}
             <SidebarDropdown
               id="manage-support"
               icon="fa-solid fa-headset"

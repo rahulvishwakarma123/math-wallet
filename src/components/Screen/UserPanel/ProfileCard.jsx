@@ -11,7 +11,10 @@ import { TbCopyCheck, TbCopy } from "react-icons/tb";
 
 const ProfileCard = () => {
   const user = useSelector((state) => state?.isLoggedUser?.data);
-  console.log(user)
+  console.log("=== USER DATA ===", user);
+  console.log("User ID:", user?.id);
+  console.log("User _id:", user?._id);
+  console.log("All User Keys:", Object.keys(user || {}));
   const [copiedText1, setCopiedText1] = useState(false);
   const location = window.location.origin;
   const referCode = `${location}/register?referral=${user?.referralLink}`;

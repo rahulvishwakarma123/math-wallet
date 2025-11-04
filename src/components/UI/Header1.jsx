@@ -17,6 +17,7 @@ const Header1 = () => {
             alt="AURAVEST Logo" 
             onClick={() => navigate(LandingRouters.DASHBOARD)} 
           />
+          <span className="text-xl font-bold text-ecru">AURAVEST</span>
         </div>
 
         <div className="flex items-center gap-3">
@@ -39,7 +40,7 @@ const Header1 = () => {
 
       {/* Desktop Header */}
       <header className="hidden lg:flex fixed py-2 top-0 left-0 right-0 z-50 bg-rich-black/80 backdrop-blur-xl h-20 items-center justify-between px-8 border-b border-delft-blue">
-        <div className="flex items-center">
+        <div className="flex items-center gap-3">
           <div className="relative cursor-pointer" onClick={() => navigate(LandingRouters.DASHBOARD)}>
             <div className="absolute inset-0 bg-gradient-to-r from-chamoisee via-ecru to-chamoisee blur-2xl opacity-20"></div>
             <img 
@@ -48,6 +49,7 @@ const Header1 = () => {
               alt="AURAVEST Logo" 
             />
           </div>
+          <span className="text-2xl font-bold text-ecru">AURAVEST</span>
         </div>
 
         <div className="flex items-center gap-4">

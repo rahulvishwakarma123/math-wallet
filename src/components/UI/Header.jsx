@@ -117,12 +117,13 @@ const Header = ({ toggle }) => {
       {/* Desktop Navbar */}
       <div className="hidden lg:flex items-center justify-between py-4 w-full px-6">
         <div className="flex items-center justify-around space-x-4 2xl:space-x-12">
-          <Link to="/" data-discover="true">
+          <Link to="/" data-discover="true" className="flex items-center gap-3">
             <img
               src={MainContent.appLogo}
               alt="Logo"
               className="h-12 w-auto cursor-pointer p2 bg-black dark:bg-transparent rounded"
             />
+            <span className="text-xl font-bold text-[var(--text)]">AURAVEST</span>
           </Link>
 
           <div className="hidden lg:flex lg:space-x-8 lg:pl-8 xl:space-x-16">
@@ -186,12 +187,13 @@ const Header = ({ toggle }) => {
 
       {/* Mobile Header */}
       <div className="flex flex-row justify-between items-center lg:hidden py-4 px-4">
-        <Link to="/" data-discover="true">
+        <Link to="/" data-discover="true" className="flex items-center gap-2">
           <img
             src={MainContent.appLogo}
             alt="Logo"
             className="h-8 w-auto cursor-pointer"
           />
+          <span className="text-lg font-bold text-[var(--text)]">AURAVEST</span>
         </Link>
         <div className="flex items-center gap-2">
           <button

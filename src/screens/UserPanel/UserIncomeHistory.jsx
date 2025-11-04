@@ -191,30 +191,30 @@ const UserIncomeHistory = () => {
         icon: "https://img.icons8.com/3d-fluency/94/sales-performance.png",
         path: AuthenticatedUserRouters.INCOME_HISTORY,
       },
-      {
-        title: "Total Trading Income",
-        value: `$ ${Number(totalIncome?.totalTrading ?? 0).toFixed(2)}`,
-        icon: "https://img.icons8.com/3d-fluency/94/receive-cash.png",
-        path: AuthenticatedUserRouters.TRADING_INCOME_HISTORY,
-      },
+      // {
+      //   title: "Total Trading Income",
+      //   value: `$ ${Number(totalIncome?.totalTrading ?? 0).toFixed(2)}`,
+      //   icon: "https://img.icons8.com/3d-fluency/94/receive-cash.png",
+      //   path: AuthenticatedUserRouters.TRADING_INCOME_HISTORY,
+      // },
       {
         title: "Total Level Income",
         value: `$ ${Number(totalIncome?.totalLevel ?? 0).toFixed(2)}`,
         icon: "https://cdn-icons-png.flaticon.com/512/10102/10102408.png",
         path: AuthenticatedUserRouters.LEVEL_INCOME_HISTORY,
       },
-      {
-        title: "Total Global Achievers",
-        value: `${Number(totalIncome?.totalGlobalAchiever ?? 0).toFixed(2)}`,
-        icon: "https://img.icons8.com/3d-fluency/94/medal.png",
-        path: AuthenticatedUserRouters.GLOBAL_ACHIEVERS,
-      },
-      {
-        title: "Total Matching Income",
-        value: `$ ${Number(totalIncome?.totalMatching ?? 0).toFixed(2)}`,
-        icon: "https://img.icons8.com/3d-fluency/94/combo-chart.png",
-        path: AuthenticatedUserRouters.MATCHING_INCOME_HISTORY,
-      },
+      // {
+      //   title: "Total Global Achievers",
+      //   value: `${Number(totalIncome?.totalGlobalAchiever ?? 0).toFixed(2)}`,
+      //   icon: "https://img.icons8.com/3d-fluency/94/medal.png",
+      //   path: AuthenticatedUserRouters.GLOBAL_ACHIEVERS,
+      // },
+      // {
+      //   title: "Total Matching Income",
+      //   value: `$ ${Number(totalIncome?.totalMatching ?? 0).toFixed(2)}`,
+      //   icon: "https://img.icons8.com/3d-fluency/94/combo-chart.png",
+      //   path: AuthenticatedUserRouters.MATCHING_INCOME_HISTORY,
+      // },
       {
         title: "Total Referrals Income",
         value: `$ ${Number(totalIncome?.totalReferral ?? 0).toFixed(2)}`,

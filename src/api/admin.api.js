@@ -202,22 +202,46 @@ export const getAllRankRewardHistory = async () => {
 
 export async function getPackageInfoAdmin() {
   try {
-    const response = await Axios.get(`${adminApi}/package/get-admin-reports`);
+    const response = await Axios.get(`${adminApi}/package/get-all-packages`);
     return response?.data;
   } catch (error) {
-    return error;
+    return error?.response?.data || error;
   }
 }
 
+export const createPackageAdmin = async (payload) => {
+  try {
+    const response = await Axios.post(`${adminApi}/package/create`, payload);
+    return response?.data;
+  } catch (error) {
+    return error?.response?.data || error;
+  }
+};
+
 export const updatePackageAdmin = async (id, payload) => {
   try {
+    if (!id) {
+      return { success: false, message: "Package ID is required" };
+    }
     const response = await Axios.put(
-      `${adminApi}/package/update/${id}`,
+      `${adminApi}/package/update?packageId=${id}`,
       payload
     );
     return response?.data;
   } catch (error) {
-    return error;
+    return error?.response?.data || error;
+  }
+};
+
+export const deletePackageAdmin = async (id) => {
+  try {
+    if (!id) {
+      return { success: false, message: "Package ID is required" };
+    }
+    const response = await Axios.delete(`${adminApi}/package/delete?packageId=${id}`);
+    return response?.data;
+  } catch (error) {
+    return error?.response?.data || error;
   }
 };
 
@@ -390,11 +414,10 @@ export async function requestWithdrawalStatus(payload) {
 
 export async function getAllPackageBuyers() {
   try {
-    const response = await Axios.get(`${adminApi}/tx/withdrawal-accepted`, 
-    );
+    const response = await Axios.get(`${adminApi}/package/get-package-buyers`);
     return response?.data;
   } catch (error) {
-    return error?.response.data;
+    return error?.response?.data || error;
   }
 }
 
