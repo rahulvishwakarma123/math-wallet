@@ -62,8 +62,12 @@ import RaiseTicket from "../../screens/UserPanel/RaiseTicket";
 import RaiseTicketHistory from "../../screens/UserPanel/RaiseTicketHistory";
 import UserFundTransfer from "../../screens/UserPanel/UserFundTransfer";
 import UserFundTransferHistory from "../../screens/UserPanel/UserFundTransferHistory";
+import DollarBankPage from "../../screens/UserPanel/DollarBankPage";
 import ChangePassword from "../../screens/AdminPanel/ChangePassword";
 import UserRankRewardHistory from "../../screens/UserPanel/UserRankRewardHistory";
+import DollarBank from "../../screens/AdminPanel/DollarBank";
+import DollarBankInvestments from "../../screens/UserPanel/DollarBankInvestments";
+import DollarBankWithdrawalRequests from "../../screens/AdminPanel/DollarBankWithdrawalRequests";
 
 const Authenticated = () => {
   const role = useSelector((state) => state?.isLoggedUser?.role);
@@ -182,6 +186,14 @@ const Authenticated = () => {
               path={AuthenticatedUserRouters.USER_FUND_TRANSFER_HISTORY}
               element={<UserFundTransferHistory />}
             />
+            <Route
+              path={AuthenticatedUserRouters.DOLLAR_BANK}
+              element={<DollarBankPage />}
+            />
+            <Route
+              path={AuthenticatedUserRouters.DOLLAR_BANK_INVESTMENTS}
+              element={<DollarBankInvestments />}
+            />
           </Route>
 
           <Route
@@ -299,6 +311,14 @@ const Authenticated = () => {
             <Route
               path={AuthenticatedAdminRouters.CHANGE_PASSWORD}
               element={<ChangePassword />}
+            />
+            <Route
+              path={AuthenticatedAdminRouters.DOLLAR_BANK}
+              element={<DollarBank />}
+            />
+            <Route
+              path={AuthenticatedAdminRouters.DOLLAR_BANK_WITHDRAWAL_REQUESTS}
+              element={<DollarBankWithdrawalRequests />}
             />
           </Route>
 

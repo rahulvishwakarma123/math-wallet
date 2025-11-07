@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
-  getAllWithdrawalRequests,
-  getIncomeTotalForAdmin,
-  requestWithdrawalStatus,
-  withdrawalRequestApproveReject,
+  getAllDollarBankWithdrawalRequests,
+  updateDollarBankWithdrawalStatus,
 } from "../../api/admin.api";
 import { setLoading } from "../../redux/slices/loadingSlice";
 import DataTable from "../../components/Screen/UserPanel/DataTable";
@@ -15,35 +13,47 @@ import { isToday } from "../../utils/helper";
 import { FaCheck, FaRegCopy } from "react-icons/fa6";
 import { QRCodeCanvas } from "qrcode.react";
 import StatCard from "../../components/Screen/UserPanel/StatCard";
-import { AuthenticatedAdminRouters } from "../../constants/routes";
+import { Building2 } from "lucide-react";
 
-const ApprovedWithdrawal = () => {
-  const [allWithdrawalHistory, setAllWithdrawalHistory] = useState([]);
+const DollarBankWithdrawalRequests = () => {
+  const [allWithdrawalRequests, setAllWithdrawalRequests] = useState([]);
   const [selectedWithdrawal, setSelectedWithdrawal] = useState(null);
-  const [totalIncome, setTotalIncome] = useState({});
   const [copied, setCopied] = useState(false);
   const dispatch = useDispatch();
   const location = useLocation();
   const data = location?.state;
-  const fetchAllWithdrawalHistory = async () => {
+
+  const fetchAllWithdrawalRequests = async () => {
     try {
       dispatch(setLoading(true));
-      const response = await getAllWithdrawalRequests();
-      setAllWithdrawalHistory(response?.data?.history);
+      const response = await getAllDollarBankWithdrawalRequests();
+      if (response?.success) {
+        const requestsData = Array.isArray(response?.data)
+          ? response?.data
+          : Array.isArray(response?.data?.history)
+          ? response?.data?.history
+          : Array.isArray(response?.data?.requests)
+          ? response?.data?.requests
+          : [];
+        setAllWithdrawalRequests(requestsData);
+      }
     } catch (err) {
       console.log(err);
     } finally {
       dispatch(setLoading(false));
     }
   };
+
   useEffect(() => {
-    fetchAllWithdrawalHistory();
+    fetchAllWithdrawalRequests();
   }, []);
 
-  const filteredIncomeHistory =
+  const filteredRequests =
     data === "today"
-      ? allWithdrawalHistory.filter((item) => isToday(new Date(item.createdAt)))
-      : allWithdrawalHistory;
+      ? allWithdrawalRequests.filter((item) =>
+          isToday(new Date(item.createdAt))
+        )
+      : allWithdrawalRequests;
 
   const handleCopy = async () => {
     if (!selectedWithdrawal?.clientAddress) return;
@@ -56,20 +66,25 @@ const ApprovedWithdrawal = () => {
     }
   };
 
-  const updateStatus = async (id, status) => {
+  const updateStatus = async (transactionId, status) => {
     try {
       dispatch(setLoading(true));
-      const payload = { id, status };
-      const response = await requestWithdrawalStatus(payload);
+      const payload = { 
+        transactionId: transactionId,
+        status: status 
+      };
+      const response = await updateDollarBankWithdrawalStatus(payload);
 
       if (response?.success) {
-        setAllWithdrawalHistory((prev) =>
+        setAllWithdrawalRequests((prev) =>
           prev.map((item) =>
-            item._id === id ? { ...item, status: status } : item
+            (item?.id === transactionId || item?._id === transactionId) 
+              ? { ...item, status: status } 
+              : item
           )
         );
         Swal.fire({
-          text: response.message,
+          text: response.message || "Status updated successfully",
           icon: "success",
           toast: true,
           position: "top-end",
@@ -77,6 +92,7 @@ const ApprovedWithdrawal = () => {
           timerProgressBar: true,
           showConfirmButton: false,
         });
+        fetchAllWithdrawalRequests(); // Refresh the list
       } else {
         Swal.fire({
           text: response?.message ?? "Something went wrong",
@@ -89,11 +105,29 @@ const ApprovedWithdrawal = () => {
         });
       }
     } catch (error) {
-      console.error(error);
+      console.error("Error updating withdrawal status:", error);
+      Swal.fire({
+        text: error?.response?.data?.message || error?.message || "Something went wrong",
+        icon: "error",
+        toast: true,
+        position: "top-end",
+        timer: 1500,
+        timerProgressBar: true,
+        showConfirmButton: false,
+      });
     } finally {
       dispatch(setLoading(false));
       setSelectedWithdrawal(null);
     }
+  };
+
+  const formatAmount = (amt) => {
+    return amt
+      ? Number(amt).toLocaleString("en-US", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })
+      : "0.00";
   };
 
   const columns = [
@@ -107,22 +141,37 @@ const ApprovedWithdrawal = () => {
     {
       header: "Transaction ID",
       accessor: "id",
-      cell: (row) => <span className="font-medium text-white">{row?.id}</span>,
+      cell: (row) => (
+        <span className="font-medium text-white font-mono text-xs">
+          {row?.id}
+        </span>
+      ),
+    },
+    {
+      header: "Investment ID",
+      accessor: "investmentId",
+      cell: (row) => (
+        <span className="font-medium text-white font-mono text-xs">
+          {row?.investmentId || row?.investment?.id || "N/A"}
+        </span>
+      ),
     },
     {
       header: "User ID / Name",
       accessor: "user.username",
       cell: (row) => (
-        <span className="font-medium text-white">{row?.user?.username}</span>
+        <span className="font-medium text-white">
+          {row?.user?.username || row?.user?.id || "N/A"}
+        </span>
       ),
-      searchValue: (row) => row?.user?.username,
+      searchValue: (row) => row?.user?.username || row?.user?.id,
     },
     {
       header: "Client Address",
       accessor: "clientAddress",
       cell: (row) => (
         <span className="font-medium text-white">
-          {maskWalletAddress(row?.clientAddress)}
+          {maskWalletAddress(row?.clientAddress || row?.walletAddress)}
         </span>
       ),
     },
@@ -136,11 +185,18 @@ const ApprovedWithdrawal = () => {
       ),
     },
     {
-      header: "Withdrawal",
+      header: "Investment Amount",
       accessor: "investment",
-      cell: (row) => (
-        <span className="font-medium text-white">$ {row?.investment}</span>
-      ),
+      cell: (row) => {
+        const amount =
+          row?.investment ||
+          row?.investmentAmount ||
+          row?.investment?.investment ||
+          0;
+        return (
+          <span className="font-medium text-white">$ {formatAmount(amount)}</span>
+        );
+      },
     },
     {
       header: "Gas Fees",
@@ -148,20 +204,35 @@ const ApprovedWithdrawal = () => {
       cell: (row) => {
         const gasFee = row?.gasFee ?? 0;
         return (
-          <span className="font-medium text-white">
-            $ {Number(gasFee).toFixed(2)}
+          <span className="font-medium text-red-400">
+            $ {formatAmount(gasFee)}
           </span>
         );
       },
     },
-
+    {
+      header: "Net Amount",
+      accessor: "netAmount",
+      cell: (row) => {
+        const netAmount = row?.netAmount ?? 0;
+        return (
+          <span className="font-medium text-green-400">
+            $ {formatAmount(netAmount)}
+          </span>
+        );
+      },
+    },
     {
       header: "Status",
       accessor: "status",
       cell: (row) => (
         <span
           className={`font-medium ${
-            row?.status === "Completed" ? "text-green-500" : "text-yellow-400"
+            row?.status === "Completed"
+              ? "text-green-500"
+              : row?.status === "Cancelled"
+              ? "text-red-500"
+              : "text-yellow-400"
           }`}
         >
           {row?.status}
@@ -197,14 +268,8 @@ const ApprovedWithdrawal = () => {
               row?.status === "Completed" || row?.status === "Cancelled"
             }
           >
-            Withdraw
+            Process
           </button>
-          {/* <button
-            className="px-4 py-1 text-xs font-semibold text-white bg-red-500 rounded-md hover:bg-red-600"
-            onClick={() => handleApproveReject(row?._id, "reject")}
-          >
-            Reject
-          </button> */}
         </div>
       ),
     },
@@ -212,40 +277,46 @@ const ApprovedWithdrawal = () => {
 
   const cardData = [
     {
-      title: "Today Withdraw",
-      value: `$ ${Number(totalIncome?.todayWithdraw ?? 0).toFixed(2)}`,
-      icon: "https://img.icons8.com/3d-fluency/94/atm.png",
+      title: "Total Requests",
+      value: `${allWithdrawalRequests.length}`,
+      icon: "https://img.icons8.com/3d-fluency/94/money-bag.png",
     },
     {
-      title: "Total Withdraw",
-      value: `$ ${Number(totalIncome?.totalWithdraw ?? 0).toFixed(2)}`,
-      icon: "https://img.icons8.com/3d-fluency/94/money-bag.png",
+      title: "Processing",
+      value: `${
+        allWithdrawalRequests.filter((item) => item.status === "Processing")
+          .length
+      }`,
+      icon: "https://img.icons8.com/3d-fluency/94/clock.png",
+    },
+    {
+      title: "Completed",
+      value: `${
+        allWithdrawalRequests.filter((item) => item.status === "Completed")
+          .length
+      }`,
+      icon: "https://img.icons8.com/3d-fluency/94/checkmark.png",
     },
   ];
 
-  const fetchCardData = async (page = 1) => {
-    try {
-      dispatch(setLoading(true));
-      const response = await getIncomeTotalForAdmin();
-      if (response?.success) {
-        setTotalIncome(response || {});
-      } else {
-        toast.error(response?.message || "Something went wrong");
-        setTotalIncome({});
-      }
-    } catch (err) {
-      toast.error("Failed to fetch income history");
-    } finally {
-      dispatch(setLoading(false));
-    }
-  };
-
-  useEffect(() => {
-    fetchCardData();
-  }, []);
-
   return (
     <div className="space-y-5 mt-5">
+      {/* Header */}
+      <div className="flex items-center gap-4 mb-6">
+        <div className="p-3 bg-gradient-to-br from-yellow-500/20 to-amber-500/20 border border-yellow-500/30 rounded-xl">
+          <Building2 className="w-6 h-6 text-yellow-400" />
+        </div>
+        <div>
+          <h1 className="text-3xl font-bold text-white">
+            Dollar Bank Withdrawal Requests
+          </h1>
+          <p className="text-slate-400 mt-1">
+            Manage Dollar Bank withdrawal requests from users
+          </p>
+        </div>
+      </div>
+
+      {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {cardData.map((item) => (
           <StatCard
@@ -253,15 +324,14 @@ const ApprovedWithdrawal = () => {
             title={item.title}
             value={item.value}
             iconImage={item.icon}
-            change={item.change}
-            changeType={item.changeType}
           />
         ))}
       </div>
+
       <DataTable
-        title="Withdrawal History"
+        title="Dollar Bank Withdrawal Requests"
         columns={columns}
-        data={filteredIncomeHistory}
+        data={filteredRequests}
         pageSize={10}
       />
       {selectedWithdrawal && (
@@ -278,7 +348,8 @@ const ApprovedWithdrawal = () => {
               Wallet Address QR
             </h2>
             <p className="break-words text-xs p-1 px-2 rounded whitespace-nowrap bg-slate-100">
-              {selectedWithdrawal.clientAddress}
+              {selectedWithdrawal.clientAddress ||
+                selectedWithdrawal.walletAddress}
             </p>
 
             <div className="my-2 flex justify-center">
@@ -293,40 +364,49 @@ const ApprovedWithdrawal = () => {
 
             <div className="flex justify-center">
               <QRCodeCanvas
-                value={selectedWithdrawal.clientAddress}
+                value={
+                  selectedWithdrawal.clientAddress ||
+                  selectedWithdrawal.walletAddress
+                }
                 size={150}
               />
             </div>
 
-            <div className="py-2 flex items-center justify-center flex-col">
-              <p>Total Amount : ${selectedWithdrawal?.investment}</p>
-              <p>Gas Fees : ${Number(selectedWithdrawal?.gasFee ?? 0).toFixed(2)}</p>
+            <div className="py-2 flex items-center justify-center flex-col space-y-1">
               <p>
-                Withdrawal amount : $
-                {selectedWithdrawal?.netAmount
-                  ? Number(selectedWithdrawal.netAmount).toFixed(2)
-                  : selectedWithdrawal?.investment
-                  ? (selectedWithdrawal.investment - (selectedWithdrawal.gasFee ?? 0)).toFixed(2)
-                  : "0"}
+                Investment Amount: $
+                {formatAmount(
+                  selectedWithdrawal?.investment ||
+                    selectedWithdrawal?.investmentAmount ||
+                    selectedWithdrawal?.investment?.investment
+                )}
+              </p>
+              <p>
+                Gas Fees: $
+                {formatAmount(selectedWithdrawal?.gasFee ?? 0)}
+              </p>
+              <p>
+                Net Amount: $
+                {formatAmount(selectedWithdrawal?.netAmount ?? 0)}
               </p>
             </div>
 
             <div className="mt-3 grid grid-cols-2 gap-2">
               <button
                 onClick={() =>
-                  updateStatus(selectedWithdrawal._id, "Completed")
+                  updateStatus(selectedWithdrawal.id || selectedWithdrawal._id, "Completed")
                 }
                 disabled={selectedWithdrawal.status !== "Processing"}
-                className="rounded-md border border-white/40 bg-[#6EB72D] px-2 py-1 text-sm text-white transition active:scale-95 disabled:cursor-not-allowed disabled:opacity-70"
+                className="rounded-md border border-white/40 bg-[#6EB72D] px-2 py-1 text-sm text-white transition active:scale-95 disabled:cursor-not-allowed disabled:opacity-70 hover:bg-[#5da625]"
               >
                 Approve
               </button>
               <button
                 onClick={() =>
-                  updateStatus(selectedWithdrawal._id, "Cancelled")
+                  updateStatus(selectedWithdrawal.id || selectedWithdrawal._id, "Cancelled")
                 }
                 disabled={selectedWithdrawal.status !== "Processing"}
-                className="rounded-md border border-white/40 bg-red-500 px-2 py-1 text-sm text-white transition active:scale-95 disabled:cursor-not-allowed disabled:opacity-70"
+                className="rounded-md border border-white/40 bg-red-500 px-2 py-1 text-sm text-white transition active:scale-95 disabled:cursor-not-allowed disabled:opacity-70 hover:bg-red-600"
               >
                 Reject
               </button>
@@ -338,4 +418,5 @@ const ApprovedWithdrawal = () => {
   );
 };
 
-export default ApprovedWithdrawal;
+export default DollarBankWithdrawalRequests;
+

@@ -67,10 +67,13 @@ const RequestWithdrawal = () => {
       if (res?.success) {
         setShowOtpModal(true);
       } else {
-        toast.error(res?.message || "Something went wrong");
+        const errorMessage = res?.response?.data?.message || res?.message || res?.response?.data?.error || "Something went wrong";
+        toast.error(errorMessage);
       }
     } catch (error) {
       console.log("Error in withdrawal request:", error);
+      const errorMessage = error?.response?.data?.message || error?.message || "Something went wrong";
+      toast.error(errorMessage);
     } finally {
       dispatch(setLoading(false));
     }
@@ -92,10 +95,35 @@ const RequestWithdrawal = () => {
     return amt ? Number(amt).toLocaleString() : "0";
   };
 
+  // Format amount with 2 decimal places for currency
+  const formatCurrency = (amt) => {
+    if (!amt || Number(amt) <= 0) return "0.00";
+    return Number(amt).toLocaleString("en-US", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+  };
+
   const remainingAmount =
     withdrawalAmount - Number(amount) >= 0
       ? withdrawalAmount - Number(amount)
       : 0;
+
+  // Calculate gas fees (4% of withdrawal amount)
+  const calculateGasFees = (withdrawalAmt) => {
+    if (!withdrawalAmt || Number(withdrawalAmt) <= 0) return 0;
+    return (Number(withdrawalAmt) * 4) / 100;
+  };
+
+  // Calculate net amount after gas fees deduction
+  const calculateNetAmount = (withdrawalAmt) => {
+    if (!withdrawalAmt || Number(withdrawalAmt) <= 0) return 0;
+    const gasFees = calculateGasFees(withdrawalAmt);
+    return Number(withdrawalAmt) - gasFees;
+  };
+
+  const gasFees = amount ? calculateGasFees(amount) : 0;
+  const netAmount = amount ? calculateNetAmount(amount) : 0;
 
   const OtpModal = ({ show, onClose, onSubmit }) => {
     const [otp, setOtp] = useState("");
@@ -123,10 +151,13 @@ const RequestWithdrawal = () => {
           setAmount("");
           setOtp("");
         } else {
-          toast.error(res?.message || "Something went wrong");
+          const errorMessage = res?.response?.data?.message || res?.message || res?.response?.data?.error || "Something went wrong";
+          toast.error(errorMessage);
         }
       } catch (error) {
         console.log("Error in withdrawal request:", error);
+        const errorMessage = error?.response?.data?.message || error?.message || "Something went wrong";
+        toast.error(errorMessage);
       } finally {
         dispatch(setLoading(false)); // Reset loading state
       }
@@ -189,10 +220,13 @@ const RequestWithdrawal = () => {
         );
         setAmount("");
       } else {
-        toast.error(res?.message || "Something went wrong");
+        const errorMessage = res?.response?.data?.message || res?.message || res?.response?.data?.error || "Something went wrong";
+        toast.error(errorMessage);
       }
     } catch (error) {
       console.log("Error in withdrawal request:", error);
+      const errorMessage = error?.response?.data?.message || error?.message || "Something went wrong";
+      toast.error(errorMessage);
     } finally {
       dispatch(setLoading(false)); // Reset loading state
     }
@@ -355,9 +389,10 @@ const RequestWithdrawal = () => {
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-400">Transaction Charge:</span>
-                    <span className="text-cyan-400 font-mono text-xs">
-                      Minimum 10%
+                    <span className="text-slate-400">Gas Fees (4%):</span>
+                    <span className="text-red-400 font-semibold">
+                      {getMoneySymbol()}
+                      {formatCurrency(gasFees)}
                     </span>
                   </div>
                   <div className="flex justify-between border-t border-slate-600/30 pt-2 mt-3">
@@ -366,7 +401,7 @@ const RequestWithdrawal = () => {
                     </span>
                     <span className="text-green-400 font-bold text-lg">
                       {getMoneySymbol()}
-                      {formatAmount(amount)}
+                      {formatCurrency(netAmount)}
                     </span>
                   </div>
                 </div>

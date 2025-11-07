@@ -328,3 +328,46 @@ export const verifyWithdrawalDetails = async (payload) => {
     return error;
   }
 };
+
+export const investInDollarBank = async (payload) => {
+  try {
+    const response = await Axios.post(
+      `${userApi}/dollar-bank/invest`,
+      payload,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response?.data;
+  } catch (error) {
+    return error?.response?.data || error;
+  }
+};
+
+export const getUserDollarBankInvestments = async () => {
+  try {
+    const response = await Axios.get(`${userApi}/dollar-bank/my-investments`);
+    return response?.data;
+  } catch (error) {
+    return error?.response?.data || error;
+  }
+};
+
+export const requestDollarBankWithdrawal = async (payload) => {
+  try {
+    const response = await Axios.post(
+      `${userApi}/dollar-bank/withdraw`,
+      payload,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response?.data;
+  } catch (error) {
+    return error?.response?.data || error;
+  }
+};

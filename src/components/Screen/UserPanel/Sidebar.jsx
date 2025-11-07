@@ -718,6 +718,32 @@ const Sidebar = ({ isOpen, onClose }) => {
                 }}
               />
             </SidebarDropdown>
+            <SidebarDropdown
+              id="dollar-bank"
+              icon="fa-solid fa-building-columns"
+              text="Dollar Bank"
+              openDropdown={openDropdown}
+              setOpenDropdown={setOpenDropdown}
+            >
+              <NavLink
+                to={AuthenticatedAdminRouters.DOLLAR_BANK}
+                icon="fa-solid fa-building-columns"
+                text="Dollar Bank Summary"
+                onClose={() => {
+                  onClose();
+                  setOpenDropdown(null);
+                }}
+              />
+              <NavLink
+                to={AuthenticatedAdminRouters.DOLLAR_BANK_WITHDRAWAL_REQUESTS}
+                icon="fa-solid fa-money-bill-transfer"
+                text="Withdrawal Requests"
+                onClose={() => {
+                  onClose();
+                  setOpenDropdown(null);
+                }}
+              />
+            </SidebarDropdown>
             <NavLink
                 to={AuthenticatedAdminRouters.CHANGE_PASSWORD}
                 icon="fa-solid fa-lock"

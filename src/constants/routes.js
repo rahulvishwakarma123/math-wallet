@@ -49,6 +49,8 @@ export const AuthenticatedUserRouters = {
   RAISE_TICKET_HISTORY: "/raise-ticket-history",
   USER_FUND_TRANSFER: "/user-fund-transfer",
   USER_FUND_TRANSFER_HISTORY: "/fund-transfer-history",
+  DOLLAR_BANK: "/dollar-bank",
+  DOLLAR_BANK_INVESTMENTS: "/dollar-bank-investments",
 }
 
 export const AuthenticatedAdminRouters = {
@@ -79,4 +81,6 @@ export const AuthenticatedAdminRouters = {
   PENDING_TICKETS: "/pending-tickets",
   CLOSED_TICKETS: "/closed-tickets",
   CHANGE_PASSWORD: "/change-password",
+  DOLLAR_BANK: "/dollar-bank",
+  DOLLAR_BANK_WITHDRAWAL_REQUESTS: "/dollar-bank-withdrawal-requests",
 }

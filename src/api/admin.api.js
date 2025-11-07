@@ -46,6 +46,15 @@ export async function HoldCapitalIncome(id) {
   }
 }
 
+export async function lockUnlockCapitalInvestment(id) {
+  try {
+    const response = await Axios.get(`${adminApi}/user-capital-lock/${id}`);
+    return response?.data;
+  } catch (error) {
+    return error?.response?.data;
+  }
+}
+
 export async function RoiGenerate(id) {
   try {
     const response = await Axios.get(`${adminApi}/user-roi-block/${id}`);
@@ -438,3 +447,47 @@ export async function changeAdminPassword(payload) {
     return error?.response?.data;
   }
 }
+
+export const getDollarBankSummary = async () => {
+  try {
+    const response = await Axios.get(`${adminApi}/dollar-bank/summary`);
+    return response?.data;
+  } catch (error) {
+    return error?.response?.data || error;
+  }
+};
+
+export const getAllDollarBankUsers = async () => {
+  try {
+    const response = await Axios.get(`${adminApi}/dollar-bank/all-users`);
+    return response?.data;
+  } catch (error) {
+    return error?.response?.data || error;
+  }
+};
+
+export const getAllDollarBankWithdrawalRequests = async () => {
+  try {
+    const response = await Axios.get(`${adminApi}/dollar-bank/withdrawal-requests`);
+    return response?.data;
+  } catch (error) {
+    return error?.response?.data || error;
+  }
+};
+
+export const updateDollarBankWithdrawalStatus = async (payload) => {
+  try {
+    const response = await Axios.post(
+      `/dollar-bank/withdrawal-approve-reject`,
+      payload,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response?.data;
+  } catch (error) {
+    return error?.response?.data || error;
+  }
+};

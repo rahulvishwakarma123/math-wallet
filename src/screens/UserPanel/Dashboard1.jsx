@@ -76,19 +76,12 @@ const Dashboard1 = () => {
   }, [dispatch, access, role]);
 
   const revenueOverview = [
+    // Ticked Cards - Keep these visible
     {
-      title: "Active Partners",
-      value: `${Number(totalIncome?.partnerActive ?? 0)}`,
-      icon: "https://img.icons8.com/3d-fluency/94/ok.png",
-      path: AuthenticatedUserRouters.MY_REFERRALS,
-      data: "active",
-    },
-    {
-      title: "Inactive Partners",
-      value: `${Number(totalIncome?.partnerInactive ?? 0)}`,
-      icon: "https://img.icons8.com/3d-fluency/94/group--v3.png",
-      path: AuthenticatedUserRouters.MY_REFERRALS,
-      data: "inactive",
+      title: "Total Downline Users",
+      value: `${Number(totalIncome?.totalDownlineUsers ?? 0)}`,
+      icon: "https://img.icons8.com/3d-fluency/94/user-group-woman-woman--v3.png",
+      path: AuthenticatedUserRouters.MY_TEAM,
     },
     {
       title: "Today Trading Income",
@@ -98,32 +91,22 @@ const Dashboard1 = () => {
       data: "today",
     },
     {
-      title: "Today Level Income",
-      value: `$ ${Number(totalIncome?.todayLevel ?? 0).toFixed(2)}`,
-      icon: "https://img.icons8.com/isometric/50/economic-improvement--v1.png",
+      title: "Total Level Income",
+      value: `$ ${Number(totalIncome?.totalLevel ?? 0).toFixed(2)}`,
+      icon: "https://img.icons8.com/3d-fluency/94/bar-chart.png",
       path: AuthenticatedUserRouters.LEVEL_INCOME_HISTORY,
-      data: "today",
     },
     {
-      title: "Today Referrals Income",
-      value: `$ ${Number(totalIncome?.todayReferral ?? 0).toFixed(2)}`,
-      icon: "https://img.icons8.com/3d-plastilina/69/share--v1.png",
-      path: AuthenticatedUserRouters.REFERRAL_INCOME_HISTORY,
-      data: "today",
-    },
-    {
-      title: "Today Investement",
-      value: `$ ${Number(totalIncome?.todayTransaction ?? 0).toFixed(2)}`,
+      title: "Total Investment",
+      value: `$ ${Number(totalIncome?.totalInvestment ?? totalIncome?.totalTransaction ?? 0).toFixed(2)}`,
       icon: "https://img.icons8.com/3d-fluency/94/exchange.png",
       path: AuthenticatedUserRouters.INVESTMENT_HISTORY,
-      data: "today",
     },
     {
-      title: "Today Team Transaction",
-      value: `$ ${Number(totalIncome?.todayTeamTransaction ?? 0).toFixed(2)}`,
+      title: "Total Team Transaction",
+      value: `$ ${Number(totalIncome?.totalTeamTransaction ?? 0).toFixed(2)}`,
       icon: "https://img.icons8.com/pulsar-gradient/48/refund-2.png",
       path: AuthenticatedUserRouters.TRANSACTIONS,
-      data: "today",
     },
     {
       title: "Today Withdrawals",
@@ -131,6 +114,12 @@ const Dashboard1 = () => {
       icon: "https://img.icons8.com/isometric/50/card-in-use.png",
       path: AuthenticatedUserRouters.WITHDRAWAL_HISTORY,
       data: "today",
+    },
+    {
+      title: "Total Income",
+      value: `$ ${Number(totalIncome?.totalIncome ?? 0).toFixed(2)}`,
+      icon: "https://img.icons8.com/3d-fluency/94/stack-of-coins.png",
+      path: AuthenticatedUserRouters.INCOME_HISTORY,
     },
     {
       title: "Today Income",
@@ -144,8 +133,51 @@ const Dashboard1 = () => {
       value: `$ ${Number(totalIncome?.totalRankReward ?? 0).toFixed(2)}`,
       icon: "https://img.icons8.com/3d-fluency/94/money-bag.png",
       path: AuthenticatedUserRouters.RANK_REWARD_HISTORY,
-      data: "today",
     },
+    
+    // Commented out cards - Not ticked in image
+    // {
+    //   title: "Active Partners",
+    //   value: `${Number(totalIncome?.partnerActive ?? 0)}`,
+    //   icon: "https://img.icons8.com/3d-fluency/94/ok.png",
+    //   path: AuthenticatedUserRouters.MY_REFERRALS,
+    //   data: "active",
+    // },
+    // {
+    //   title: "Inactive Partners",
+    //   value: `${Number(totalIncome?.partnerInactive ?? 0)}`,
+    //   icon: "https://img.icons8.com/3d-fluency/94/group--v3.png",
+    //   path: AuthenticatedUserRouters.MY_REFERRALS,
+    //   data: "inactive",
+    // },
+    // {
+    //   title: "Today Level Income",
+    //   value: `$ ${Number(totalIncome?.todayLevel ?? 0).toFixed(2)}`,
+    //   icon: "https://img.icons8.com/isometric/50/economic-improvement--v1.png",
+    //   path: AuthenticatedUserRouters.LEVEL_INCOME_HISTORY,
+    //   data: "today",
+    // },
+    // {
+    //   title: "Today Referrals Income",
+    //   value: `$ ${Number(totalIncome?.todayReferral ?? 0).toFixed(2)}`,
+    //   icon: "https://img.icons8.com/3d-plastilina/69/share--v1.png",
+    //   path: AuthenticatedUserRouters.REFERRAL_INCOME_HISTORY,
+    //   data: "today",
+    // },
+    // {
+    //   title: "Today Investement",
+    //   value: `$ ${Number(totalIncome?.todayTransaction ?? 0).toFixed(2)}`,
+    //   icon: "https://img.icons8.com/3d-fluency/94/exchange.png",
+    //   path: AuthenticatedUserRouters.INVESTMENT_HISTORY,
+    //   data: "today",
+    // },
+    // {
+    //   title: "Today Team Transaction",
+    //   value: `$ ${Number(totalIncome?.todayTeamTransaction ?? 0).toFixed(2)}`,
+    //   icon: "https://img.icons8.com/pulsar-gradient/48/refund-2.png",
+    //   path: AuthenticatedUserRouters.TRANSACTIONS,
+    //   data: "today",
+    // },
   ];
 
   const cardData = [

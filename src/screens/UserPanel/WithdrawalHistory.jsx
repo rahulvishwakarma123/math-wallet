@@ -79,11 +79,15 @@ const WithdrawalHistory = () => {
       ),
     },
     {
-      header: "Percentage",
-      accessor: "percentage",
+      header: "Gas Fees",
+      accessor: "gasFee",
       cell: (row) => {
-        const tenPercent = (row?.investment ?? 0) * 0.1;
-        return <span className="font-medium text-white">$ {tenPercent}</span>;
+        const gasFee = row?.gasFee ?? 0;
+        return (
+          <span className="font-medium text-white">
+            $ {Number(gasFee).toFixed(2)}
+          </span>
+        );
       },
     },
     {

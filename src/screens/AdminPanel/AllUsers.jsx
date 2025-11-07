@@ -7,6 +7,7 @@ import {
   HoldCapitalIncome,
   RoiGenerate,
   updateUserDetails,
+  lockUnlockCapitalInvestment,
 } from "../../api/admin.api";
 import { setLoading } from "../../redux/slices/loadingSlice";
 import DataTable from "../../components/Screen/UserPanel/DataTable";
@@ -281,6 +282,50 @@ const AllUsers = () => {
     }
   };
 
+  const handleCapitalLock = async (id) => {
+    try {
+      dispatch(setLoading(true));
+      const response = await lockUnlockCapitalInvestment(id);
+      if (response?.success) {
+        Swal.fire({
+          icon: "success",
+          text: response?.message || "Capital investment lock/unlock successful",
+          toast: true,
+          position: "top-end",
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+        });
+
+        // Refresh the users list to get updated data
+        fetchAllUsers();
+      } else {
+        Swal.fire({
+          icon: "error",
+          text: response?.message || "Something went wrong!",
+          toast: true,
+          position: "top-end",
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+        });
+      }
+    } catch (error) {
+      console.error("Error locking/unlocking capital:", error);
+      Swal.fire({
+        icon: "error",
+        text: "Something went wrong!",
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+      });
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
   const handleAccess = async (id) => {
     setLoading(true);
     try {
@@ -409,23 +454,49 @@ const AllUsers = () => {
       },
     },
     {
-      header: "Hold Capital Amount",
+      header: "Hold Current Income",
       accessor: "isCurrentIncomeHold",
       exportable: false,
       cell: (row) => {
         return row?.active?.isCurrentIncomeHold === true ? (
           <div
-            className="font-semibold text-green-400 text-xl flex items-center justify-center w-full"
+            className="font-semibold text-green-400 text-xl flex items-center justify-center w-full cursor-pointer"
             onClick={() => handleBlockIncome(row?._id)}
           >
             <i class="fa-solid fa-toggle-on"></i>
           </div>
         ) : (
           <div
-            className="font-semibold text-white text-xl flex items-center justify-center w-full"
+            className="font-semibold text-white text-xl flex items-center justify-center w-full cursor-pointer"
             onClick={() => handleBlockIncome(row?._id)}
           >
             <i class="fa-solid fa-toggle-off"></i>
+          </div>
+        );
+      },
+    },
+    {
+      header: "Lock/Unlock Capital Investment",
+      accessor: "isCapitalLocked",
+      exportable: false,
+      cell: (row) => {
+        // Check if capital is locked - adjust field name based on backend response
+        const isLocked = row?.active?.isCapitalLocked === true || row?.isCapitalLocked === true;
+        return isLocked ? (
+          <div
+            className="font-semibold text-green-400 text-xl flex items-center justify-center w-full cursor-pointer"
+            onClick={() => handleCapitalLock(row?._id)}
+            title="Capital Investment Locked - Click to unlock"
+          >
+            <i class="fa-solid fa-lock"></i>
+          </div>
+        ) : (
+          <div
+            className="font-semibold text-yellow-400 text-xl flex items-center justify-center w-full cursor-pointer"
+            onClick={() => handleCapitalLock(row?._id)}
+            title="Capital Investment Unlocked - Click to lock"
+          >
+            <i class="fa-solid fa-lock-open"></i>
           </div>
         );
       },

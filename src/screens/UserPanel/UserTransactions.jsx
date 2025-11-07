@@ -18,12 +18,22 @@ const UserTransactions = () => {
       dispatch(setLoading(true));
       const response = await getAllUserTransactions();
       if(response?.success){
-        setAllTransactions(response?.data);
+        // Ensure data is always an array
+        const transactionsData = Array.isArray(response?.data) 
+          ? response?.data 
+          : Array.isArray(response?.data?.transactions) 
+          ? response?.data?.transactions 
+          : Array.isArray(response?.data?.history)
+          ? response?.data?.history
+          : [];
+        setAllTransactions(transactionsData);
       } else {
         toast.error(response?.message || "Something went wrong");
+        setAllTransactions([]);
       }
     } catch (err) {
       console.log(err);
+      setAllTransactions([]);
     } finally {
       dispatch(setLoading(false));
     }
@@ -33,9 +43,9 @@ const UserTransactions = () => {
   }, []);
 
   const filteredIncomeHistory =
-  data === "today"
+  data === "today" && Array.isArray(allTransactions)
     ? allTransactions.filter((item) => isToday(new Date(item.createdAt)))
-    : allTransactions;
+    : Array.isArray(allTransactions) ? allTransactions : [];
 
   const columns = [
     {

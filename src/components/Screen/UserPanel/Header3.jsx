@@ -137,6 +137,15 @@ const Header3 = ({ onMenuClick }) => {
           <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-slate-900"></span>
         </button> */}
 
+        {/* Dollar Bank Icon */}
+        <button
+          onClick={() => navigate(AuthenticatedUserRouters.DOLLAR_BANK)}
+          className="w-10 h-10 flex items-center justify-center rounded-full bg-yellow-500/20 text-yellow-400 hover:bg-yellow-500/30 transition-colors duration-200 border border-yellow-500/30 cursor-pointer"
+          title="Dollar Bank"
+        >
+          <i className="fa-solid fa-building-columns text-lg"></i>
+        </button>
+
         {/* 3. User Profile section ko relative banaya gaya hai */}
         <div className="relative">
           {/* User Profile ko ek button banaya gaya hai */}
