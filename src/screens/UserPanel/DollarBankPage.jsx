@@ -245,7 +245,7 @@ const DollarBankPage = () => {
               <h2 className="text-3xl font-bold text-white mb-1">
                 Dollar Bank Investment
               </h2>
-              <p className="text-slate-400">Invest and earn 15% profit locked for 1 year</p>
+              <p className="text-slate-400">Invest and earn 25% profit locked for 1 year</p>
             </div>
           </div>
           <button
@@ -262,9 +262,9 @@ const DollarBankPage = () => {
           <div className="flex items-center gap-3">
             <TrendingUp className="w-5 h-5 text-yellow-400 flex-shrink-0" />
             <div>
-              <span className="text-yellow-300 font-semibold">15% Annual Profit</span>
+              <span className="text-yellow-300 font-semibold">25% Annual Profit</span>
               <p className="text-yellow-200/70 text-sm mt-1">
-                Your investment will be locked for 1 year with guaranteed 15% profit return
+                Your investment will be locked for 1 year with guaranteed 25% profit return
               </p>
             </div>
           </div>
@@ -342,7 +342,7 @@ const DollarBankPage = () => {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-slate-400">Profit Rate:</span>
-                    <span className="text-yellow-400 font-semibold">15%</span>
+                    <span className="text-yellow-400 font-semibold">25%</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-slate-400">Lock Period:</span>
@@ -402,7 +402,7 @@ const DollarBankPage = () => {
                 
                 <div className="flex justify-between items-center p-3 bg-slate-800/50 rounded-lg">
                   <span className="text-slate-400">Profit Rate:</span>
-                  <span className="text-yellow-400 font-semibold text-lg">15%</span>
+                  <span className="text-yellow-400 font-semibold text-lg">25%</span>
                 </div>
                 
                 <div className="flex justify-between items-center p-3 bg-slate-800/50 rounded-lg">
@@ -452,7 +452,7 @@ const DollarBankPage = () => {
             <AlertCircle className="w-4 h-4 text-yellow-400 flex-shrink-0 mt-0.5" />
             <span>
               Your investment will be locked for 1 year. You can only withdraw the amount after the maturity date. 
-              The 15% profit will be added to your account upon maturity.
+              The 25% profit will be added to your account upon maturity.
             </span>
           </p>
         </div>

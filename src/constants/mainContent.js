@@ -1,5 +1,6 @@
 import axios from "axios";
-import store from "../redux/store";
+import store, { persistor } from "../redux/store";
+import { logoutUser } from "../redux/slices/authSlice";
 // import appLogo from "../assets/appLogo.png";
 import appLogo from "../assets/auravest-logo.png";
 import appFavicon from "../assets/auravest-logo.png";
@@ -44,5 +45,43 @@ Axios.interceptors.request.use(
     return config;
   },
   (error) => Promise.reject(error)
+);
+
+// Response interceptor to handle 401 and "User not found" errors
+Axios.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response) {
+      const status = error.response.status;
+      const message = error.response?.data?.message || error.response?.data?.error || "";
+      const messageLower = message.toLowerCase();
+      
+      // Check for 401 status or "User not found" message
+      if (
+        status === 401 || 
+        messageLower.includes("user not found") || 
+        messageLower.includes("unauthorized") ||
+        messageLower.includes("token") ||
+        messageLower.includes("invalid")
+      ) {
+        // Clear user data from Redux
+        store.dispatch(logoutUser());
+        
+        // Purge redux-persist storage
+        persistor.purge();
+        
+        // Clear localStorage and sessionStorage
+        localStorage.clear();
+        sessionStorage.clear();
+        
+        // Redirect to landing page
+        const currentPath = window.location.pathname;
+        if (currentPath !== "/" && currentPath !== "/login" && currentPath !== "/admin/login" && currentPath !== "/register") {
+          window.location.href = "/";
+        }
+      }
+    }
+    return Promise.reject(error);
+  }
 );
 

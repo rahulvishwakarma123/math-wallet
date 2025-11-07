@@ -447,6 +447,32 @@ const Sidebar = ({ isOpen, onClose }) => {
                 }}
               />
             </SidebarDropdown>
+            <SidebarDropdown
+              id="dollar-bank"
+              icon="fa-solid fa-building-columns"
+              text="Dollar Bank"
+              openDropdown={openDropdown}
+              setOpenDropdown={setOpenDropdown}
+            >
+              <NavLink
+                to={AuthenticatedUserRouters.DOLLAR_BANK}
+                icon="fa-solid fa-building-columns"
+                text="Dollar Bank"
+                onClose={() => {
+                  onClose();
+                  setOpenDropdown(null);
+                }}
+              />
+              <NavLink
+                to={AuthenticatedUserRouters.DOLLAR_BANK_INVESTMENTS}
+                icon="fa-solid fa-list"
+                text="My Investments"
+                onClose={() => {
+                  onClose();
+                  setOpenDropdown(null);
+                }}
+              />
+            </SidebarDropdown>
             <NavLink
               to={AuthenticatedUserRouters.PROFILE}
               icon="fa-solid fa-user"

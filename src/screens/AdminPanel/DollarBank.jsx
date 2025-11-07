@@ -187,7 +187,7 @@ const DollarBank = () => {
       header: "Profit Rate",
       accessor: "profit",
       cell: (row) => {
-        // Calculate profit percentage (15% based on the response structure)
+        // Calculate profit percentage (25% based on the response structure)
         const profitPercent = row?.investment
           ? ((row.profit / row.investment) * 100).toFixed(1)
           : "0";
