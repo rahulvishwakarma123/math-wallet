@@ -1,12 +1,12 @@
-import React, { useState } from "react";
-import { DollarSign, TrendingUp, Lock, Calendar, CheckCircle, AlertCircle, Building2, Eye } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { DollarSign, TrendingUp, Lock, Calendar, CheckCircle, AlertCircle, Building2, Eye, X, Wallet } from 'lucide-react';
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { ethers } from "ethers";
 import Swal from "sweetalert2";
 import { setLoading } from "../../redux/slices/loadingSlice";
-import { investInDollarBank } from "../../api/user.api";
+import { investInDollarBank, investInDollarBankFromWithdrawalWallet } from "../../api/user.api";
 import { AuthenticatedUserRouters } from "../../constants/routes";
 
 const getMoneySymbol = () => "$";
@@ -14,9 +14,23 @@ const getMoneySymbol = () => "$";
 const DollarBankPage = () => {
   const [amount, setAmount] = useState("");
   const [investmentData, setInvestmentData] = useState(null);
+  const [showDollarBankModal, setShowDollarBankModal] = useState(false);
+  const [dollarBankAmount, setDollarBankAmount] = useState("");
+  const [withdrawalAmount, setWithdrawalAmount] = useState(0);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const userInfo = useSelector((state) => state?.isLoggedUser?.data);
+
+  // Get the withdrawable amount from Redux
+  const reduxWithdrawalAmount =
+    useSelector(
+      (state) => state?.isLoggedUser?.data?.incomeDetails?.income?.currentIncome
+    ) || 0;
+
+  // Set withdrawalAmount when reduxWithdrawalAmount changes
+  useEffect(() => {
+    setWithdrawalAmount(reduxWithdrawalAmount);
+  }, [reduxWithdrawalAmount]);
 
   const USDT_ADDRESS = "0x55d398326f99059fF775485246999027B3197955";
   const USDT_ABI = [
@@ -270,6 +284,17 @@ const DollarBankPage = () => {
           </div>
         </div>
 
+        {/* Add Fund to Dollar Bank from Withdrawal Wallet Button */}
+        <div className="relative mb-6">
+          <button
+            onClick={() => setShowDollarBankModal(true)}
+            className="w-full py-3 px-6 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 hover:from-blue-500/30 hover:to-cyan-500/30 border border-blue-500/30 rounded-xl font-semibold text-blue-400 transition-all duration-300 flex items-center justify-center gap-3 hover:shadow-lg hover:shadow-blue-500/20"
+          >
+            <Wallet className="w-5 h-5" />
+            <span>Add Fund to Dollar Bank from Withdrawal Wallet</span>
+          </button>
+        </div>
+
         {!investmentData ? (
           <>
             {/* Quick Amount Buttons */}
@@ -455,6 +480,172 @@ const DollarBankPage = () => {
               The 25% profit will be added to your account upon maturity.
             </span>
           </p>
+        </div>
+      </div>
+
+      {/* Dollar Bank Investment Modal */}
+      {showDollarBankModal && (
+        <DollarBankModal
+          show={showDollarBankModal}
+          onClose={() => {
+            setShowDollarBankModal(false);
+            setDollarBankAmount("");
+          }}
+          amount={dollarBankAmount}
+          setAmount={setDollarBankAmount}
+          withdrawalAmount={withdrawalAmount}
+          setWithdrawalAmount={setWithdrawalAmount}
+        />
+      )}
+    </div>
+  );
+};
+
+// Dollar Bank Investment Modal Component
+const DollarBankModal = ({
+  show,
+  onClose,
+  amount,
+  setAmount,
+  withdrawalAmount,
+  setWithdrawalAmount,
+}) => {
+  const dispatch = useDispatch();
+
+  const handleSubmit = async () => {
+    const numberAmount = Number(amount);
+
+    if (!amount || numberAmount <= 0) {
+      toast.error("Please enter a valid amount");
+      return;
+    }
+
+    if (numberAmount > withdrawalAmount) {
+      toast.error("Amount exceeds your available withdrawal balance");
+      return;
+    }
+
+    try {
+      dispatch(setLoading(true));
+      const res = await investInDollarBankFromWithdrawalWallet({
+        amount: numberAmount,
+      });
+
+      if (res?.success) {
+        toast.success(res?.message || "Funds transferred to Dollar Bank successfully");
+        
+        // Update withdrawal amount after successful transfer
+        const remainingBalance = withdrawalAmount - numberAmount;
+        setWithdrawalAmount(remainingBalance >= 0 ? remainingBalance : 0);
+
+        // Close modal and reset amount
+        onClose();
+      } else {
+        const errorMessage =
+          res?.response?.data?.message ||
+          res?.message ||
+          res?.response?.data?.error ||
+          "Something went wrong";
+        toast.error(errorMessage);
+      }
+    } catch (error) {
+      console.log("Error in Dollar Bank investment:", error);
+      const errorMessage =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Something went wrong";
+      toast.error(errorMessage);
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
+  if (!show) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+      <div className="bg-slate-900 border border-yellow-500/30 p-6 rounded-xl w-full max-w-md shadow-2xl">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-gradient-to-br from-yellow-500/20 to-amber-500/20 border border-yellow-500/30 rounded-lg">
+              <Building2 className="w-5 h-5 text-yellow-400" />
+            </div>
+            <h2 className="text-white text-xl font-bold">
+              Add Fund to Dollar Bank
+            </h2>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-slate-800 rounded-lg transition-colors"
+          >
+            <X className="w-5 h-5 text-slate-400" />
+          </button>
+        </div>
+
+        {/* Available Balance */}
+        <div className="mb-4 p-3 bg-slate-800/50 rounded-lg">
+          <div className="flex justify-between items-center">
+            <span className="text-slate-400 text-sm">Available Balance:</span>
+            <span className="font-bold text-green-400">
+              {getMoneySymbol()}
+              {withdrawalAmount?.toLocaleString() || "0"}
+            </span>
+          </div>
+        </div>
+
+        {/* Amount Input */}
+        <div className="mb-4">
+          <label className="flex items-center gap-2 text-sm font-semibold text-slate-300 mb-3">
+            <DollarSign className="w-4 h-4 text-yellow-400" />
+            Investment Amount ({getMoneySymbol()})
+          </label>
+          <input
+            type="number"
+            inputMode="decimal"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            placeholder="Enter amount"
+            className="w-full bg-slate-800/50 border border-slate-700/50 rounded-xl py-3 px-4 text-white text-lg font-semibold focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500/50 transition-all duration-300"
+          />
+        </div>
+
+        {/* Info Notice */}
+        <div className="mb-6 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+          <p className="text-xs text-yellow-200/80 flex items-start gap-2">
+            <AlertCircle className="w-4 h-4 text-yellow-400 flex-shrink-0 mt-0.5" />
+            <span>
+              Your investment will be locked for 1 year with 25% annual profit.
+              You can withdraw this amount only after the maturity date.
+            </span>
+          </p>
+        </div>
+
+        {/* Buttons */}
+        <div className="flex justify-end gap-3">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-600 transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleSubmit}
+            disabled={
+              !amount ||
+              Number(amount) <= 0 ||
+              Number(amount) > withdrawalAmount
+            }
+            className={`px-4 py-2 rounded-lg font-semibold transition-all duration-300 ${
+              !amount ||
+              Number(amount) <= 0 ||
+              Number(amount) > withdrawalAmount
+                ? "bg-slate-700/50 text-slate-500 cursor-not-allowed"
+                : "bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-400 hover:to-amber-400 text-white shadow-lg shadow-yellow-500/25"
+            }`}
+          >
+            Submit
+          </button>
         </div>
       </div>
     </div>

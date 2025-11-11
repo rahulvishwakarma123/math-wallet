@@ -18,13 +18,12 @@ const StatItem = ({ icon, label, value }) => (
 const PartnerCard = ({ partner, index }) => {
   const {
     _id,
+    id,
     username,
     email,
     account,
     investment,
     createdAt,
-    leftChild,
-    rightChild,
     active,
   } = partner || {};
 
@@ -71,16 +70,6 @@ const PartnerCard = ({ partner, index }) => {
           }
         />
         <StatItem
-          icon="fa-code-branch"
-          label="Left Child"
-          value={leftChild ? leftChild.slice(-5) : "N/A"}
-        />
-        <StatItem
-          icon="fa-code-branch"
-          label="Right Child"
-          value={rightChild ? rightChild.slice(-5) : "N/A"}
-        />
-        <StatItem
           icon="fa-user-shield"
           label="Is Verified"
           value={active?.isVerified ? "Yes" : "No"}
@@ -91,15 +80,6 @@ const PartnerCard = ({ partner, index }) => {
           value={active?.isBlocked ? "Yes" : "No"}
         />
         <StatItem
-          icon="fa-calendar-check"
-          label="Activated On"
-          value={
-            active?.activeDate
-              ? moment(active.activeDate).format("YYYY-MM-DD")
-              : "N/A"
-          }
-        />
-        <StatItem
           icon="fa-calendar-plus"
           label="Joined On"
           value={createdAt ? moment(createdAt).format("YYYY-MM-DD") : "Unknown"}
@@ -107,7 +87,7 @@ const PartnerCard = ({ partner, index }) => {
         <StatItem
           icon="fa-id-card"
           label="User ID"
-          value={_id?.slice(-6) || "N/A"}
+          value={id || "N/A"}
         />
       </div>
       <StatItem

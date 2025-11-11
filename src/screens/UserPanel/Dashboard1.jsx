@@ -331,7 +331,9 @@ const Dashboard1 = () => {
       
       {role === "USER" && (
         <div className="card hero-glass">
-          <UserActivityProgress />
+          <UserActivityProgress 
+            totalInvestment={Number(totalIncome?.totalInvestment ?? totalIncome?.totalTransaction ?? 0)}
+          />
         </div>
       )}
 

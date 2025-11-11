@@ -109,7 +109,14 @@ const Teams = () => {
     try {
       dispatch(setLoading(true));
       const res = await getDirectUsers();
-      setData(res?.allDownlines || []);
+      // API returns data in res.data.downlines
+      const downlines = res?.data?.downlines || [];
+      // Map walletAddress to account for PartnerCard component
+      const mappedData = downlines.map((downline) => ({
+        ...downline,
+        account: downline.walletAddress,
+      }));
+      setData(mappedData);
     } catch (error) {
       console.log(error);
     } finally {

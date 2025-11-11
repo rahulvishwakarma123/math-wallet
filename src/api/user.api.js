@@ -371,3 +371,20 @@ export const requestDollarBankWithdrawal = async (payload) => {
     return error?.response?.data || error;
   }
 };
+
+export const investInDollarBankFromWithdrawalWallet = async (payload) => {
+  try {
+    const response = await Axios.post(
+      `${userApi}/dollar-bank/invest-from-withdrawal-wallet`,
+      payload,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response?.data;
+  } catch (error) {
+    return error?.response?.data || error;
+  }
+};

@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { TrendingUp, Star, Crown, Award, Target, DollarSign, ArrowUp, Zap } from 'lucide-react';
+import { useSelector } from 'react-redux';
 
-// Investment levels configuration with dummy data
+// Investment levels configuration
 const investmentLevels = [
   { id: 1, name: "Bronze Investor", minInvestment: 0, maxInvestment: 9999, color: "bronze", icon: Star, benefits: ["Basic portfolio tracking", "Monthly reports"] },
   { id: 2, name: "Silver Investor", minInvestment: 10000, maxInvestment: 49999, color: "silver", icon: Award, benefits: ["Priority support", "Advanced analytics", "Quarterly reviews"] },
@@ -10,23 +11,61 @@ const investmentLevels = [
   { id: 5, name: "Diamond Investor", minInvestment: 500000, maxInvestment: Infinity, color: "diamond", icon: Crown, benefits: ["Elite status", "Private banking", "Custom investment solutions"] }
 ];
 
-// Dummy user data
-const userData = {
-  totalInvestment: 87500,
-  currentLevel: "Gold Investor",
-  nextLevel: "Platinum Investor",
-  progressPercentage: 58.33, // (87500 - 50000) / (150000 - 50000) * 100
-  amountToNextLevel: 62500,
-  memberSince: "2023-03-15",
-  totalReturns: 12750,
-  activeInvestments: 8
-};
+const UserActivityProgress = ({ totalInvestment = 0 }) => {
+  // Get user data from Redux
+  const userInfo = useSelector((state) => state?.isLoggedUser?.data);
+  
+  // Calculate 2.5x goal
+  const investmentGoal = useMemo(() => {
+    const investment = Number(totalInvestment) || 0;
+    return investment * 2.5;
+  }, [totalInvestment]);
 
-const UserActivityProgress = () => {
-  const currentLevelData = investmentLevels.find(level => level.name === userData.currentLevel);
-  const nextLevelData = investmentLevels.find(level => level.name === userData.nextLevel);
+  // Calculate progress percentage for 2.5x goal
+  const progressPercentage = useMemo(() => {
+    const investment = Number(totalInvestment) || 0;
+    if (investment <= 0) return 0;
+    // Progress is based on how much of the 2.5x goal has been achieved
+    // Since we're showing progress towards 2.5x, we calculate: (current / goal) * 100
+    // But since goal = investment * 2.5, we need to show progress from investment to goal
+    const goal = investment * 2.5;
+    const progress = (investment / goal) * 100;
+    return Math.min(progress, 100);
+  }, [totalInvestment]);
+
+  // Calculate amount needed to reach 2.5x
+  const amountToGoal = useMemo(() => {
+    const investment = Number(totalInvestment) || 0;
+    const goal = investment * 2.5;
+    return Math.max(0, goal - investment);
+  }, [totalInvestment]);
+
+  // Determine current level based on investment
+  const currentLevelData = useMemo(() => {
+    const investment = Number(totalInvestment) || 0;
+    const level = investmentLevels.find(level => 
+      investment >= level.minInvestment && investment <= level.maxInvestment
+    ) || investmentLevels[0];
+    return level;
+  }, [totalInvestment]);
+
+  // Determine next level
+  const nextLevelData = useMemo(() => {
+    const currentIndex = investmentLevels.findIndex(level => level.id === currentLevelData.id);
+    if (currentIndex < investmentLevels.length - 1) {
+      return investmentLevels[currentIndex + 1];
+    }
+    return currentLevelData; // Already at max level
+  }, [currentLevelData]);
+
   const CurrentLevelIcon = currentLevelData?.icon || Star;
   const NextLevelIcon = nextLevelData?.icon || Crown;
+
+  // Get member since date from user info
+  const memberSince = userInfo?.createdAt || new Date().toISOString();
+  
+  // Calculate total returns (can be fetched from API if available)
+  const totalReturns = 0; // This can be updated when API provides this data
 
   const getColorClasses = (color) => {
     const colors = {
@@ -56,7 +95,7 @@ const UserActivityProgress = () => {
           </div>
         </div>
         <div className="text-right">
-          <div className="text-3xl font-bold text-hero-primary gradient-text">${userData.totalInvestment.toLocaleString()}</div>
+          <div className="text-3xl font-bold text-hero-primary gradient-text">${Number(totalInvestment || 0).toLocaleString()}</div>
           <div className="text-sm text-hero-secondary">Total Investment</div>
         </div>
       </div>
@@ -68,15 +107,15 @@ const UserActivityProgress = () => {
             <DollarSign className="w-5 h-5 text-stat-active" />
             <span className="text-hero-secondary text-sm">Total Returns</span>
           </div>
-          <div className="text-2xl font-bold text-stat-active">${userData.totalReturns.toLocaleString()}</div>
+          <div className="text-2xl font-bold text-stat-active">${Number(totalReturns || 0).toLocaleString()}</div>
         </div>
 
         <div className="card border border-glass-border p-5 rounded-xl hover:border-chamoisee/50 transition-colors duration-300">
           <div className="flex items-center gap-3 mb-2">
             <Target className="w-5 h-5 text-delft-blue-2" />
-            <span className="text-hero-secondary text-sm">Active Investments</span>
+            <span className="text-hero-secondary text-sm">2.5x Goal</span>
           </div>
-          <div className="text-2xl font-bold text-delft-blue-2">{userData.activeInvestments}</div>
+          <div className="text-2xl font-bold text-delft-blue-2">${Number(investmentGoal || 0).toLocaleString()}</div>
         </div>
 
         <div className="card border border-glass-border p-5 rounded-xl hover:border-chamoisee/50 transition-colors duration-300">
@@ -85,7 +124,7 @@ const UserActivityProgress = () => {
             <span className="text-hero-secondary text-sm">Member Since</span>
           </div>
           <div className="text-lg font-bold text-chamoisee">
-            {new Date(userData.memberSince).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}
+            {new Date(memberSince).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}
           </div>
         </div>
       </div>
@@ -98,7 +137,7 @@ const UserActivityProgress = () => {
               <CurrentLevelIcon className={`w-5 h-5 ${currentColors.text}`} />
             </div>
             <div>
-              <div className="text-lg font-bold text-hero-primary">{userData.currentLevel}</div>
+              <div className="text-lg font-bold text-hero-primary">{currentLevelData.name}</div>
               <div className="text-sm text-hero-secondary">Current Level</div>
             </div>
           </div>
@@ -107,7 +146,7 @@ const UserActivityProgress = () => {
           
           <div className="flex items-center gap-3">
             <div>
-              <div className="text-lg font-bold text-hero-primary text-right">{userData.nextLevel}</div>
+              <div className="text-lg font-bold text-hero-primary text-right">{nextLevelData.name}</div>
               <div className="text-sm text-hero-secondary text-right">Next Level</div>
             </div>
             <div className={`p-2 rounded-lg border ${nextColors.border} ${nextColors.bg}`}>
@@ -116,28 +155,28 @@ const UserActivityProgress = () => {
           </div>
         </div>
 
-        {/* Progress Bar */}
+        {/* Progress Bar for 2.5x Goal */}
         <div className="relative mb-4">
           <div className="w-full bg-space-cadet/50 rounded-full h-4 overflow-hidden">
             <div 
               className="h-full bg-gold-gradient rounded-full transition-all duration-1000 ease-out relative overflow-hidden"
-              style={{ width: `${userData.progressPercentage}%` }}
+              style={{ width: `${progressPercentage}%` }}
             >
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-ecru/20 to-transparent animate-pulse"></div>
             </div>
           </div>
           <div className="absolute -top-5 left-0 right-0 flex justify-between text-xs text-hero-secondary">
-            <span>${currentLevelData?.minInvestment.toLocaleString()}</span>
-            <span>{userData.progressPercentage.toFixed(1)}% Complete</span>
-            <span>${nextLevelData?.minInvestment.toLocaleString()}</span>
+            <span>${Number(totalInvestment || 0).toLocaleString()}</span>
+            <span>{progressPercentage.toFixed(1)}% Complete</span>
+            <span>${Number(investmentGoal || 0).toLocaleString()}</span>
           </div>
         </div>
 
-        {/* Investment Needed */}
+        {/* Investment Needed for 2.5x Goal */}
         <div className="flex items-center justify-center gap-2 p-4 bg-chamoisee/20 rounded-xl border border-chamoisee/30">
           <Target className="w-5 h-5 text-chamoisee" />
           <span className="text-hero-primary font-semibold">
-            Invest <span className="text-chamoisee font-bold">${userData.amountToNextLevel.toLocaleString()}</span> more to reach {userData.nextLevel}
+            Invest <span className="text-chamoisee font-bold">${Number(amountToGoal || 0).toLocaleString()}</span> more to reach 2.5x goal (${Number(investmentGoal || 0).toLocaleString()})
           </span>
         </div>
       </div>
