@@ -2,15 +2,15 @@ import axios from "axios";
 import store, { persistor } from "../redux/store";
 import { logoutUser } from "../redux/slices/authSlice";
 // import appLogo from "../assets/appLogo.png";
-import appLogo from "../assets/auravest-logo.png";
-import appFavicon from "../assets/auravest-logo.png";
+import appLogo from "../assets/mathwallet.jpeg";
+import appFavicon from "../assets/mathwallet.jpeg";
 // import appFavicon from "../assets/appFavicon.png";
 
 export const MainContent = {
   name: "SL BALA",
   appLogo: appLogo,
   favIcon: appFavicon,
-  appName: "Auravest"
+  appName: "Mathwallet"
 };
 
 export const backendConfig = {

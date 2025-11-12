@@ -15,6 +15,7 @@ import DataTable from "../../components/Screen/UserPanel/DataTable";
 import { useLocation } from "react-router-dom";
 import { isToday } from "../../utils/helper";
 import Swal from "sweetalert2";
+import { STAKING_PACKAGES } from "../../constants/packagesAndRewards";
 
 const ManagePackage = () => {
   const dispatch = useDispatch();
@@ -38,56 +39,27 @@ const ManagePackage = () => {
   });
   const [isCreateMode, setIsCreateMode] = useState(false);
 
-  const staticPlans = [
-    {
-      id: 1,
-      title: "BASIC Plan",
-      min: 50,
-      max: 1000,
-      profitPercentage: 8,
-      limit: "Up to 3X",
-      recommended: false,
-      features: [
-        "8% return on investment",
-        "Investment range: $50 – $1000",
-        "Profit limit: Up to 3X",
-        "Limited support",
-        "Basic access to features",
-      ],
-    },
-    {
-      id: 2,
-      title: "STANDARD Plan",
-      min: 1010,
-      max: 5000,
-      profitPercentage: 10,
-      limit: "Up to 3X",
-      recommended: true,
-      features: [
-        "10% return on investment",
-        "Investment range: $1010 – $5,000",
-        "Profit limit: Up to 3X",
-        "Priority support",
-        "Access to premium features",
-      ],
-    },
-    {
-      id: 3,
-      title: "PREMIUM Plan",
-      min: 5100,
-      max: Infinity,
-      profitPercentage: 12,
-      limit: "Up to 3X",
-      recommended: false,
-      features: [
-        "12% return on investment",
-        "Investment range: $5,100 & Above",
-        "Profit limit: Up to 3X",
-        "24/7 support",
-        "Full access to all features",
-      ],
-    },
-  ];
+  // Static data to fallback to in case the API fails - using new staking packages structure
+  const staticPlans = STAKING_PACKAGES.map((pkg) => ({
+    id: pkg.id,
+    title: pkg.title,
+    min: pkg.min,
+    max: pkg.max,
+    profitPercentage: pkg.stakingProfit,
+    stakingProfit: pkg.stakingProfit,
+    miningProfit: pkg.miningProfit,
+    maxReturn: pkg.maxReturn,
+    limit: `Max ${pkg.maxReturn}%`,
+    recommended: pkg.id === 3, // Package 3 is recommended
+    features: [
+      `${pkg.stakingProfit}% daily staking profit`,
+      `${pkg.miningProfit}% daily mining profit`,
+      `Investment range: ${getMoneySymbol()}${pkg.min} – ${pkg.max === Infinity ? "∞" : getMoneySymbol() + pkg.max}`,
+      `Maximum return: ${pkg.maxReturn}%`,
+      "Eligible for Direct Connect Bonus",
+      "Eligible for Network Growth Reward",
+    ],
+  }));
 
   const handleSelectPlan = (plan) => {
     // Ensure we preserve the _id or id from the plan object

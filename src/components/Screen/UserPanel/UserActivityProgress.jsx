@@ -1,15 +1,27 @@
 import React, { useMemo } from 'react';
 import { TrendingUp, Star, Crown, Award, Target, DollarSign, ArrowUp, Zap } from 'lucide-react';
 import { useSelector } from 'react-redux';
+import { PLATFORM_PARTNERSHIP } from '../../../constants/packagesAndRewards';
 
-// Investment levels configuration
-const investmentLevels = [
-  { id: 1, name: "Bronze Investor", minInvestment: 0, maxInvestment: 9999, color: "bronze", icon: Star, benefits: ["Basic portfolio tracking", "Monthly reports"] },
-  { id: 2, name: "Silver Investor", minInvestment: 10000, maxInvestment: 49999, color: "silver", icon: Award, benefits: ["Priority support", "Advanced analytics", "Quarterly reviews"] },
-  { id: 3, name: "Gold Investor", minInvestment: 50000, maxInvestment: 149999, color: "gold", icon: Crown, benefits: ["Personal advisor", "Premium strategies", "Weekly insights"] },
-  { id: 4, name: "Platinum Investor", minInvestment: 150000, maxInvestment: 499999, color: "platinum", icon: Zap, benefits: ["VIP treatment", "Exclusive opportunities", "Daily market updates"] },
-  { id: 5, name: "Diamond Investor", minInvestment: 500000, maxInvestment: Infinity, color: "diamond", icon: Crown, benefits: ["Elite status", "Private banking", "Custom investment solutions"] }
-];
+// Platform Partnership levels configuration - using new structure
+const investmentLevels = PLATFORM_PARTNERSHIP.map((tier, index) => ({
+  id: index + 1,
+  name: `${tier.tier} Partnership`,
+  minInvestment: tier.platformInvestment,
+  maxInvestment: index < PLATFORM_PARTNERSHIP.length - 1 
+    ? PLATFORM_PARTNERSHIP[index + 1].platformInvestment - 1 
+    : Infinity,
+  color: tier.tier.toLowerCase(),
+  icon: index === 0 ? Star : index === 1 ? Award : index === 2 ? Crown : index === 3 ? Zap : Crown,
+  benefits: [
+    tier.reward,
+    `Maximum return: ${tier.maxReturn}%`,
+    "Platform Partnership benefits",
+    "Priority support",
+  ],
+  reward: tier.reward,
+  maxReturn: tier.maxReturn,
+}));
 
 const UserActivityProgress = ({ totalInvestment = 0 }) => {
   // Get user data from Redux

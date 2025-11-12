@@ -1,5 +1,5 @@
 import React from "react";
-import appLogo from "../../assets/auravest-logo.png"
+import appLogo from "../../assets/mathwallet.jpeg"
 import { useNavigate } from "react-router-dom";
 import { LandingRouters } from "../../constants/routes";
 import { UserPlus, LogIn } from "lucide-react";
@@ -17,7 +17,7 @@ const Header1 = () => {
             alt="AURAVEST Logo" 
             onClick={() => navigate(LandingRouters.DASHBOARD)} 
           />
-          <span className="text-xl font-bold text-ecru">AURAVEST</span>
+         
         </div>
 
         <div className="flex items-center gap-3">
@@ -49,7 +49,7 @@ const Header1 = () => {
               alt="AURAVEST Logo" 
             />
           </div>
-          <span className="text-2xl font-bold text-ecru">AURAVEST</span>
+         
         </div>
 
         <div className="flex items-center gap-4">
