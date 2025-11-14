@@ -99,8 +99,8 @@ const Sidebar = ({ isOpen, onClose }) => {
   // useEffect(() => {
   //   dispatch(fetchUserInfo());
   // }, [dispatch]);
-  const role = useSelector((state) => state?.isLoggedUser?.role);
-  // const role = "ADMIN";
+//  const role = useSelector((state) => state?.isLoggedUser?.role);
+  const role = "ADMIN";
   const handleNavigate = (link) => {
     if (role === "ADMIN") {
       navigate(AuthenticatedAdminRouters.ADMIN_DASHBOARD);

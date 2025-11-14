@@ -70,8 +70,8 @@ import DollarBankInvestments from "../../screens/UserPanel/DollarBankInvestments
 import DollarBankWithdrawalRequests from "../../screens/AdminPanel/DollarBankWithdrawalRequests";
 
 const Authenticated = () => {
-  const role = useSelector((state) => state?.isLoggedUser?.role);
-  // const role = "ADMIN";
+  // const role = useSelector((state) => state?.isLoggedUser?.role);
+  const role = "ADMIN";
   return (
     <>
       {role === "USER" ? (
