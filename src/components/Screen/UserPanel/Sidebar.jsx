@@ -134,13 +134,16 @@ const Sidebar = ({ isOpen, onClose }) => {
           className="flex items-center gap-4 p-3 rounded-2xl bg-glass-bg border border-glass-border cursor-pointer group hover:shadow-lg hover-gold-shadow transition-all duration-300"
         >
           <div className="relative">
-            <img src={MainContent.appLogo} alt="AURAVEST Logo" className="h-10" />
-            <div className="absolute -top-1 -right-1">
-            </div>
+            <img
+              src={MainContent.appLogo}
+              alt="Math Wallet Logo"
+              className="h-10"
+            />
+            <div className="absolute -top-1 -right-1"></div>
           </div>
           {/* <div>
             <span className="text-2xl font-bold gradient-text">
-              AURAVEST
+              Math Wallet
             </span>
             <p className="text-beaver text-xs">Premium Trading</p>
           </div> */}
@@ -349,16 +352,16 @@ const Sidebar = ({ isOpen, onClose }) => {
                 }}
               />
             </SidebarDropdown>
-            
-              <NavLink
-                to={AuthenticatedUserRouters.RANK_REWARD_HISTORY}
-                icon="fa-solid fa-dollar-sign"
-                text="Rank Reward History"
-                onClose={() => {
-                  onClose();
-                  setOpenDropdown(null); // close all dropdowns on link click
-                }}
-              />
+
+            <NavLink
+              to={AuthenticatedUserRouters.RANK_REWARD_HISTORY}
+              icon="fa-solid fa-dollar-sign"
+              text="Rank Reward History"
+              onClose={() => {
+                onClose();
+                setOpenDropdown(null); // close all dropdowns on link click
+              }}
+            />
             <SidebarDropdown
               id="income-history"
               icon="fa-solid fa-hand-holding-dollar"
@@ -771,14 +774,14 @@ const Sidebar = ({ isOpen, onClose }) => {
               />
             </SidebarDropdown>
             <NavLink
-                to={AuthenticatedAdminRouters.CHANGE_PASSWORD}
-                icon="fa-solid fa-lock"
-                text="Change Password"
-                onClose={() => {
-                  onClose();
-                  setOpenDropdown(null); // close all dropdowns on link click
-                }}
-              />
+              to={AuthenticatedAdminRouters.CHANGE_PASSWORD}
+              icon="fa-solid fa-lock"
+              text="Change Password"
+              onClose={() => {
+                onClose();
+                setOpenDropdown(null); // close all dropdowns on link click
+              }}
+            />
           </>
         )}
         {/* <NavLink

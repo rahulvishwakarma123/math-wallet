@@ -104,7 +104,7 @@ const Header = ({ toggle }) => {
   // ];
 
   const isActive = (path) =>
-  location.pathname === path || location.pathname.startsWith(`${path}/`);
+    location.pathname === path || location.pathname.startsWith(`${path}/`);
 
   const handleWalletConnect = async () => {
     navigate(LandingRouters.USER_REGISTER);
@@ -123,7 +123,9 @@ const Header = ({ toggle }) => {
               alt="Logo"
               className="h-12 w-auto cursor-pointer p2 bg-black dark:bg-transparent rounded"
             />
-            <span className="text-xl font-bold text-[var(--text)]">AURAVEST</span>
+            <span className="text-xl font-bold text-[var(--text)]">
+              Math Wallet
+            </span>
           </Link>
 
           <div className="hidden lg:flex lg:space-x-8 lg:pl-8 xl:space-x-16">
@@ -193,7 +195,9 @@ const Header = ({ toggle }) => {
             alt="Logo"
             className="h-8 w-auto cursor-pointer"
           />
-          <span className="text-lg font-bold text-[var(--text)]">AURAVEST</span>
+          <span className="text-lg font-bold text-[var(--text)]">
+            Math Wallet
+          </span>
         </Link>
         <div className="flex items-center gap-2">
           <button
@@ -213,29 +217,28 @@ const Header = ({ toggle }) => {
         </div>
       </div>
 
-      
-        <div
-          ref={mobileMenuRef}
-          className={`lg:hidden fixed top-0 left-0 w-3/4 h-full z-50 bg-[var(--bg)] text-[var(--text)] shadow-xl px-6 py-8 space-y-4 overflow-auto hide-scrollbar ${
-            isMobileMenuOpen
-              ? "transform translate-x-0 transition-transform duration-300 ease-in-out"
-              : "transform -translate-x-full transition-transform duration-300 ease-in-out"
-          }`}
-        >
-          {navItems.map((menu, idx) => (
-            <div key={idx}>
-              <Link
-                to={menu.href}
-                onClick={() => setMobileMenuOpen(false)}
-                className={`block py-2 text-lg font-semibold ${
-                  isActive(menu.href)
-                    ? "text-[var(--btn-hover-text)] underline"
-                    : ""
-                }`}
-              >
-                {menu.title}
-              </Link>
-              {/* <div className="ml-4 space-y-1">
+      <div
+        ref={mobileMenuRef}
+        className={`lg:hidden fixed top-0 left-0 w-3/4 h-full z-50 bg-[var(--bg)] text-[var(--text)] shadow-xl px-6 py-8 space-y-4 overflow-auto hide-scrollbar ${
+          isMobileMenuOpen
+            ? "transform translate-x-0 transition-transform duration-300 ease-in-out"
+            : "transform -translate-x-full transition-transform duration-300 ease-in-out"
+        }`}
+      >
+        {navItems.map((menu, idx) => (
+          <div key={idx}>
+            <Link
+              to={menu.href}
+              onClick={() => setMobileMenuOpen(false)}
+              className={`block py-2 text-lg font-semibold ${
+                isActive(menu.href)
+                  ? "text-[var(--btn-hover-text)] underline"
+                  : ""
+              }`}
+            >
+              {menu.title}
+            </Link>
+            {/* <div className="ml-4 space-y-1">
                 {menu.submenu.map(([label, path], index) => (
                   <Link
                     key={index}
@@ -251,16 +254,16 @@ const Header = ({ toggle }) => {
                   </Link>
                 ))}
               </div> */}
-            </div>
-          ))}
-          <button
-            onClick={handleWalletConnect}
-            className="border border-[var(--border-color)] cursor-pointer bg-[var(--btn-bg)] text-[var(--btn-text)] hover:bg-[var(--btn-hover-bg)] hover:text-[var(--btn-hover-text)] py-2 px-4 rounded-3xl flex items-center space-x-2 transition-colors duration-200"
-          >
-            <FaGoogleWallet />
-            <span className="whitespace-nowrap">Connect Wallet</span>
-          </button>
-        </div>
+          </div>
+        ))}
+        <button
+          onClick={handleWalletConnect}
+          className="border border-[var(--border-color)] cursor-pointer bg-[var(--btn-bg)] text-[var(--btn-text)] hover:bg-[var(--btn-hover-bg)] hover:text-[var(--btn-hover-text)] py-2 px-4 rounded-3xl flex items-center space-x-2 transition-colors duration-200"
+        >
+          <FaGoogleWallet />
+          <span className="whitespace-nowrap">Connect Wallet</span>
+        </button>
+      </div>
     </div>
   );
 };

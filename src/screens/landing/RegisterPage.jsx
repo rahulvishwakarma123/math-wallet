@@ -35,7 +35,7 @@ const RegisterPage = () => {
     referral: "",
     walletAddress: "",
     countryCode: "",
-    country: ""
+    country: "",
   });
   useEffect(() => {
     if (search) {
@@ -98,7 +98,7 @@ const RegisterPage = () => {
         walletAddress: walletAddress || formData.walletAddress,
       });
 
-      console.log(response, "asdfghjk")
+      console.log(response, "asdfghjk");
 
       if (response?.success) {
         await dispatch(
@@ -118,7 +118,9 @@ const RegisterPage = () => {
           handleNavigate();
         });
       } else {
-        toast.error(response?.response?.data?.message || "Something went wrong");
+        toast.error(
+          response?.response?.data?.message || "Something went wrong"
+        );
       }
     } catch (error) {
       console.log(error);
@@ -178,9 +180,12 @@ const RegisterPage = () => {
           <div className="text-center mb-8">
             <div className="flex justify-center mb-6">
               <div className="relative">
-                <img src={MainContent.appLogo} alt="App Logo" className="h-20" />
-                <div className="absolute -top-2 -right-2">
-                </div>
+                <img
+                  src={MainContent.appLogo}
+                  alt="App Logo"
+                  className="h-20"
+                />
+                <div className="absolute -top-2 -right-2"></div>
               </div>
             </div>
 
@@ -188,7 +193,7 @@ const RegisterPage = () => {
               Create Your Account
             </h1>
             <p className="text-beaver">
-              Join the AURAVEST community and start your investment journey
+              Join the Math Wallet community and start your investment journey
             </p>
           </div>
 

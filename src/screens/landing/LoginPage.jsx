@@ -147,8 +147,7 @@ const LoginPage = () => {
           <div className="flex justify-center mb-6">
             <div className="relative">
               <img src={MainContent.appLogo} alt="App Logo" className="h-20" />
-              <div className="absolute -top-2 -right-2">
-              </div>
+              <div className="absolute -top-2 -right-2"></div>
             </div>
           </div>
 
@@ -156,7 +155,7 @@ const LoginPage = () => {
           <div className="space-y-2">
             <h1 className="text-3xl font-bold text-ecru">Welcome Back</h1>
             <p className="text-beaver text-sm">
-              Sign in to access your AURAVEST account
+              Sign in to access your Math Wallet account
             </p>
           </div>
 
@@ -208,7 +207,9 @@ const LoginPage = () => {
               <div className="w-full border-t border-delft-blue"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-3 bg-space-cadet text-beaver">OR CONTINUE WITH</span>
+              <span className="px-3 bg-space-cadet text-beaver">
+                OR CONTINUE WITH
+              </span>
             </div>
           </div>
 
@@ -230,7 +231,7 @@ const LoginPage = () => {
           {/* Sign Up Link */}
           <div className="text-sm pt-4 border-t border-delft-blue">
             <p className="text-beaver">
-              New to AURAVEST?{" "}
+              New to Math Wallet?{" "}
               <Link
                 to={LandingRouters.USER_REGISTER}
                 className="font-semibold text-ecru hover:text-chamoisee transition-colors duration-200"

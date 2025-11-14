@@ -10,7 +10,7 @@ export const MainContent = {
   name: "SL BALA",
   appLogo: appLogo,
   favIcon: appFavicon,
-  appName: "Mathwallet"
+  appName: "Mathwallet",
 };
 
 export const backendConfig = {
@@ -22,13 +22,12 @@ export const backendConfig = {
 
   // base: "http://localhost:8024/api",
   // origin: "http://localhost:8024",
-  base: "https://api.auravest.world/api",
-  origin: "https://api.auravest.world/",
+  base: "https://api.Math Wallet.world/api",
+  origin: "https://api.Math Wallet.world/",
   // base: "https://api.rbncropscience.in/api",
   // origin: "https://api.rbncropscience.in",
   // base: "https://cnfp6kct-8899.inc1.devtunnels.ms/api",
   // origin: "https://cnfp6kct-8899.inc1.devtunnels.ms",
-
 };
 
 export const Axios = axios.create({
@@ -53,30 +52,36 @@ Axios.interceptors.response.use(
   (error) => {
     if (error.response) {
       const status = error.response.status;
-      const message = error.response?.data?.message || error.response?.data?.error || "";
+      const message =
+        error.response?.data?.message || error.response?.data?.error || "";
       const messageLower = message.toLowerCase();
-      
+
       // Check for 401 status or "User not found" message
       if (
-        status === 401 || 
-        messageLower.includes("user not found") || 
+        status === 401 ||
+        messageLower.includes("user not found") ||
         messageLower.includes("unauthorized") ||
         messageLower.includes("token") ||
         messageLower.includes("invalid")
       ) {
         // Clear user data from Redux
         store.dispatch(logoutUser());
-        
+
         // Purge redux-persist storage
         persistor.purge();
-        
+
         // Clear localStorage and sessionStorage
         localStorage.clear();
         sessionStorage.clear();
-        
+
         // Redirect to landing page
         const currentPath = window.location.pathname;
-        if (currentPath !== "/" && currentPath !== "/login" && currentPath !== "/admin/login" && currentPath !== "/register") {
+        if (
+          currentPath !== "/" &&
+          currentPath !== "/login" &&
+          currentPath !== "/admin/login" &&
+          currentPath !== "/register"
+        ) {
           window.location.href = "/";
         }
       }
@@ -84,4 +89,3 @@ Axios.interceptors.response.use(
     return Promise.reject(error);
   }
 );
-

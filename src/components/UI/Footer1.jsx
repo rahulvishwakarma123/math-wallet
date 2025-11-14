@@ -57,10 +57,10 @@ const Footer1 = () => {
             </span>
             <div className="flex flex-col space-y-3">
               {[
-                "AURAVEST AI BUSD",
-                "AURAVEST AI ETH", 
-                "AURAVEST AI TRX",
-                "AURAVEST AI TON"
+                "Math Wallet AI BUSD",
+                "Math Wallet AI ETH", 
+                "Math Wallet AI TRX",
+                "Math Wallet AI TON"
               ].map((product, index) => (
                 <a
                   key={index}
@@ -82,7 +82,7 @@ const Footer1 = () => {
       <div className="z-[1] flex w-full items-start flex-col space-y-4 p-6 bg-space-cadet backdrop-blur-lg border-t border-chamoisee lg:flex-row lg:items-center lg:justify-between lg:py-6 lg:px-16 lg:space-y-0">
         <div className="flex flex-col space-y-2">
           <span className="text-sm font-light leading-relaxed text-beaver lg:text-base">
-            © 2025 AURAVEST. All Rights Reserved
+            © 2025 Math Wallet. All Rights Reserved
           </span>
           <span className="text-sm text-ecru leading-relaxed hover:text-chamoisee transition-colors cursor-pointer">
             Disclaimer
