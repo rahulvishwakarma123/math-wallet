@@ -26,7 +26,7 @@ const Dashboard1 = () => {
   // const role = useSelector((state) => state?.isLoggedUser?.role);
   const access = localStorage.getItem("access");
   console.log(access, "access");
-  const role = "ADMIN";
+  const role = "USER";
 
   const navigate = useNavigate();
   const dispatch = useDispatch();

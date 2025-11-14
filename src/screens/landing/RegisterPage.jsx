@@ -201,7 +201,7 @@ const RegisterPage = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Full Name */}
             <div className="space-y-2">
-              <label className="text-sm text-beaver mb-2 block flex items-center gap-2">
+              <label className="text-sm text-beaver mb-2 flex items-center gap-2">
                 <User className="w-4 h-4" />
                 Full Name
               </label>
@@ -219,7 +219,7 @@ const RegisterPage = () => {
 
             {/* Email Address */}
             <div className="space-y-2">
-              <label className="text-sm text-beaver mb-2 block flex items-center gap-2">
+              <label className="text-sm text-beaver mb-2  flex items-center gap-2">
                 <Mail className="w-4 h-4" />
                 Email Address
               </label>
@@ -237,7 +237,7 @@ const RegisterPage = () => {
 
             {/* Country Code */}
             <div className="space-y-2">
-              <label className="text-sm text-beaver mb-2 block flex items-center gap-2">
+              <label className="text-sm text-beaver mb-2  flex items-center gap-2">
                 <Phone className="w-4 h-4" />
                 Country Code
               </label>
@@ -252,7 +252,7 @@ const RegisterPage = () => {
 
             {/* Phone Number */}
             <div className="space-y-2">
-              <label className="text-sm text-beaver mb-2 block flex items-center gap-2">
+              <label className="text-sm text-beaver mb-2  flex items-center gap-2">
                 <Phone className="w-4 h-4" />
                 Phone Number
               </label>
@@ -272,7 +272,7 @@ const RegisterPage = () => {
 
             {/* Referral Code */}
             <div className="space-y-2">
-              <label className="text-sm text-beaver mb-2 block flex items-center gap-2">
+              <label className="text-sm text-beaver mb-2  flex items-center gap-2">
                 <UserPlus className="w-4 h-4" />
                 Referral Code (Optional)
               </label>
@@ -290,7 +290,7 @@ const RegisterPage = () => {
 
             {/* Country */}
             <div className="space-y-2">
-              <label className="text-sm text-beaver mb-2 block flex items-center gap-2">
+              <label className="text-sm text-beaver mb-2  flex items-center gap-2">
                 <MapPin className="w-4 h-4" />
                 Country
               </label>
@@ -305,7 +305,7 @@ const RegisterPage = () => {
 
             {/* Password */}
             <div className="space-y-2">
-              <label className="text-sm text-beaver mb-2 block flex items-center gap-2">
+              <label className="text-sm text-beaver mb-2  flex items-center gap-2">
                 <Key className="w-4 h-4" />
                 Password
               </label>
@@ -320,7 +320,7 @@ const RegisterPage = () => {
 
             {/* Wallet Address (Full Width) */}
             <div className="md:col-span-2 space-y-2">
-              <label className="text-sm text-beaver mb-2 block flex items-center gap-2">
+              <label className="text-sm text-beaver mb-2  flex items-center gap-2">
                 <Wallet className="w-4 h-4" />
                 Your Wallet Address
               </label>

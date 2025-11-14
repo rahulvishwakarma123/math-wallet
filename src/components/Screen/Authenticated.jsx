@@ -71,7 +71,7 @@ import DollarBankWithdrawalRequests from "../../screens/AdminPanel/DollarBankWit
 
 const Authenticated = () => {
   // const role = useSelector((state) => state?.isLoggedUser?.role);
-  const role = "ADMIN";
+  const role = "USER";
   return (
     <>
       {role === "USER" ? (

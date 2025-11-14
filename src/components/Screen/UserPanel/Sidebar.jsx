@@ -100,7 +100,7 @@ const Sidebar = ({ isOpen, onClose }) => {
   //   dispatch(fetchUserInfo());
   // }, [dispatch]);
 //  const role = useSelector((state) => state?.isLoggedUser?.role);
-  const role = "ADMIN";
+  const role = "USER";
   const handleNavigate = (link) => {
     if (role === "ADMIN") {
       navigate(AuthenticatedAdminRouters.ADMIN_DASHBOARD);
@@ -156,7 +156,7 @@ const Sidebar = ({ isOpen, onClose }) => {
         </button>
       </div>
 
-      <nav className="flex-grow space-y-2 overflow-y-auto">
+      <nav className="flex-grow space-y-2 overflow-y-auto p-2" >
         {role === "USER" && (
           <>
             <NavLink

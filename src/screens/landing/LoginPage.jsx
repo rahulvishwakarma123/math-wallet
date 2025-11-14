@@ -178,7 +178,7 @@ const LoginPage = () => {
 
             {/* Password Input */}
             <div className="space-y-2">
-              <label className="text-start text-sm text-beaver mb-2 block flex items-center gap-2">
+              <label className="text-start text-sm text-beaver mb-2 flex items-center gap-2">
                 <Lock className="w-4 h-4" />
                 Password
               </label>
