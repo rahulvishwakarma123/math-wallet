@@ -2,7 +2,7 @@ import axios from "axios";
 import store, { persistor } from "../redux/store";
 import { logoutUser } from "../redux/slices/authSlice";
 // import appLogo from "../assets/appLogo.png";
-import appLogo from "../assets/mathwallet.jpeg";
+import appLogo from "../assets/mathWallet.png";
 import appFavicon from "../assets/mathwallet.jpeg";
 // import appFavicon from "../assets/appFavicon.png";
 

@@ -1,7 +1,7 @@
 import React from "react";
 import bg from "../../assets/Landing/bg.png";
 import mobBg from "../../assets/Landing/mobBg.png";
-import appLogo from "../../assets/mathwallet.jpeg"
+import appLogo from "../../assets/mathWallet.png"
 import { FaTelegramPlane, FaYoutube } from "react-icons/fa";
 import { IoLogoFacebook } from "react-icons/io5";
 import { FaSquareXTwitter } from "react-icons/fa6";
@@ -14,7 +14,7 @@ const Footer1 = () => {
       <div className="z-[11] flex w-full justify-between px-6 py-8 h-full flex-col space-y-12 border-t border-delft-blue bg-space-cadet/30 backdrop-blur-lg lg:min-h-[334px] lg:flex-row lg:space-y-0 lg:px-16 lg:py-16 lg:h-auto">
         {/* Logo + Tagline */}
         <div className="flex flex-col justify-start space-y-4">
-          <img src={appLogo} className="md:h-28 w-1/3 lg:w-auto lg:h-48" alt="Mathwallet Logo" />
+          <img src={appLogo} className="max-sm:w-9/12 lg:w-auto lg:h-10" alt="Mathwallet Logo" />
           <span className="text-sm leading-relaxed text-beaver text-center font-light max-w-[250px] lg:text-base">
             The world's first 100% decentralized AI-powered investment platform
           </span>

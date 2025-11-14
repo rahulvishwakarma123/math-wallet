@@ -164,7 +164,7 @@ const LoginPage = () => {
           <div className="space-y-5">
             {/* Email Input */}
             <div className="space-y-2">
-              <label className="text-sm text-start text-beaver mb-2 block flex items-center gap-2">
+              <label className="text-sm text-start text-beaver mb-2 flex items-center gap-2">
                 <Mail className="w-4 h-4" />
                 Email Address
               </label>

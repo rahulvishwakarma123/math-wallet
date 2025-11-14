@@ -138,12 +138,12 @@ const Sidebar = ({ isOpen, onClose }) => {
             <div className="absolute -top-1 -right-1">
             </div>
           </div>
-          <div>
+          {/* <div>
             <span className="text-2xl font-bold gradient-text">
               AURAVEST
             </span>
             <p className="text-beaver text-xs">Premium Trading</p>
-          </div>
+          </div> */}
         </div>
         <button
           onClick={onClose}

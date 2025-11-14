@@ -13,7 +13,7 @@ const LandingPage = () => {
       <div className="min-h-screen bg-[#0C0C0C] text-white">
         {/* <Header /> */}
         <div className="pt-20 lg:pt-[60px]">
-          <Hero />
+          <Hero />  
           <div className="px-4 lg:px-0">
             <DocSlideFinal />
             {/* <School /> */}

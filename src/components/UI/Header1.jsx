@@ -1,5 +1,5 @@
 import React from "react";
-import appLogo from "../../assets/mathwallet.jpeg"
+import appLogo from "../../assets/mathWallet.png"
 import { useNavigate } from "react-router-dom";
 import { LandingRouters } from "../../constants/routes";
 import { UserPlus, LogIn } from "lucide-react";
@@ -13,7 +13,7 @@ const Header1 = () => {
         <div className="flex items-center space-x-3">
           <img 
             src={appLogo} 
-            className="h-16 cursor-pointer" 
+            className="h-10 cursor-pointer" 
             alt="AURAVEST Logo" 
             onClick={() => navigate(LandingRouters.DASHBOARD)} 
           />
@@ -22,14 +22,14 @@ const Header1 = () => {
 
         <div className="flex items-center gap-3">
           <button 
-            className="btn-secondary px-4 h-10 rounded-xl text-ecru hover:border-chamoisee transition-all duration-200 flex items-center gap-2 text-sm"
+            className="btn-secondary px-4 max-sm:px-1 h-10 rounded-xl text-ecru hover:border-chamoisee transition-all duration-200 flex items-center gap-2 text-sm max-sm:hidden"
             onClick={() => navigate(LandingRouters.USER_REGISTER)}
           >
             <UserPlus className="w-4 h-4" />
             Sign up
           </button>
           <button 
-            className="btn-primary px-4 h-10 rounded-xl text-space-cadet hover:shadow-lg hover:shadow-chamoisee/30 transition-all duration-200 flex items-center gap-2 text-sm"
+            className="btn-primary px-4 sm:px-1 h-10 rounded-xl text-space-cadet hover:shadow-lg hover:shadow-chamoisee/30 transition-all duration-200 flex items-center gap-2 text-sm"
             onClick={() => navigate(LandingRouters.USER_LOGIN)}
           >
             <LogIn className="w-4 h-4" />
